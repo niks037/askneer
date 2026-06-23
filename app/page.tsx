@@ -13,11 +13,24 @@ export default function Home() {
 
   useEffect(() => {
     const supabase = createClient();
+
+    // Handle OAuth callback via URL hash (implicit flow)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get("access_token");
     
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    if (accessToken) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });
+    } else {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      });
+    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
@@ -34,11 +47,7 @@ export default function Home() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `https://askneer.vercel.app/auth/callback`,
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
-        }
+        redirectTo: `https://askneer.vercel.app`,
       }
     });
   }
