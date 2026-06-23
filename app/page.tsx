@@ -30,10 +30,15 @@ export default function Home() {
   const supabase = createClient();
 
   async function signInWithGoogle() {
+    const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: `https://askneer.vercel.app/auth/callback`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        }
       }
     });
   }
