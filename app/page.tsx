@@ -15,6 +15,22 @@ export default function Home() {
 
   async function ask() {
     if (!input.trim()) return;
+    
+    const today = new Date().toDateString();
+    const storedDate = localStorage.getItem("askneer_date");
+    const storedCount = parseInt(localStorage.getItem("askneer_count") || "0");
+    
+    if (storedDate === today && storedCount >= 5) {
+      alert("You've used your 5 free questions for today! Upgrade to AskNeer Pro for unlimited questions.");
+      return;
+    }
+    
+    if (storedDate !== today) {
+      localStorage.setItem("askneer_date", today);
+      localStorage.setItem("askneer_count", "1");
+    } else {
+      localStorage.setItem("askneer_count", (storedCount + 1).toString());
+    }
     const userMessage = { role: "user", content: input };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
