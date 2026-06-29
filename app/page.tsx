@@ -47,7 +47,7 @@ export default function Home() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `https://askneer.vercel.app`,
+        redirectTo: `https://www.askneer.com/auth/callback`,
         skipBrowserRedirect: false,
       }
     });

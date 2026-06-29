@@ -25,5 +25,5 @@ export async function GET(request: Request) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect("https://askneer.vercel.app");
+  return NextResponse.redirect("https://www.askneer.com");
 }
