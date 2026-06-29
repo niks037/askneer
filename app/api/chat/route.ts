@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  const { message, profile, history } = await req.json();
+  const { message, profile, history, email } = await req.json();
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
@@ -23,10 +23,9 @@ export async function POST(req: Request) {
   const text = response.content.find((b: { type: string }) => b.type === "text") as { type: string; text: string } | undefined;
   const reply = text?.text || "";
 
-  // Save both user message and assistant reply to Supabase
   await supabase.from("chats").insert([
-    { child_name: profile.name, child_age: profile.age, role: "user", content: message },
-    { child_name: profile.name, child_age: profile.age, role: "assistant", content: reply },
+    { child_name: profile.name, child_age: profile.age, role: "user", content: message, email: email },
+    { child_name: profile.name, child_age: profile.age, role: "assistant", content: reply, email: email },
   ]);
 
   return Response.json({ reply });
