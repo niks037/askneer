@@ -1,64 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
-import { createClient } from "../lib/supabase";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
   const [profile, setProfile] = useState({ name: "", age: "", notes: "" });
   const [profileSaved, setProfileSaved] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    // Handle OAuth callback via URL hash (implicit flow)
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const accessToken = hashParams.get("access_token");
-    
-    if (accessToken) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-        // Clean up URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      });
-    } else {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      });
-    }
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const supabase = createClient();
-
-  async function signInWithGoogle() {
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `https://www.askneer.com/auth/callback`,
-        skipBrowserRedirect: false,
-      }
-    });
-  }
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfileSaved(false);
-    setMessages([]);
-  }
 
   function saveProfile() {
     if (!profile.name || !profile.age) return alert("Please enter child's name and age");
@@ -99,14 +49,14 @@ export default function Home() {
     setChatLoading(false);
   }
 
-  if (loading) return <main style={{ padding: 24 }}>Loading...</main>;
+  if (status === "loading") return <main style={{ padding: 24 }}>Loading...</main>;
 
-  if (!user) {
+  if (!session) {
     return (
       <main style={{ padding: 24, maxWidth: 500, margin: "0 auto", textAlign: "center" }}>
         <h1>AskNeer</h1>
         <p>Your personal parenting companion powered by NeernMom</p>
-        <button onClick={signInWithGoogle} style={{ padding: "12px 24px", background: "#4285f4", color: "white", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 16 }}>
+        <button onClick={() => signIn("google")} style={{ padding: "12px 24px", background: "#4285f4", color: "white", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 16 }}>
           Continue with Google
         </button>
       </main>
@@ -118,9 +68,9 @@ export default function Home() {
       <main style={{ padding: 24, maxWidth: 500, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h1>AskNeer</h1>
-          <button onClick={signOut} style={{ padding: "6px 12px", cursor: "pointer" }}>Sign out</button>
+          <button onClick={() => signOut()} style={{ padding: "6px 12px", cursor: "pointer" }}>Sign out</button>
         </div>
-        <p>Welcome {user.email}! Tell me about your child.</p>
+        <p>Welcome {session.user?.name}! Tell me about your child.</p>
         <input placeholder="Child's name" value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} style={{ display: "block", width: "100%", marginBottom: 8, padding: 8 }} />
         <input placeholder="Age (e.g. 18 months, 3 years)" value={profile.age} onChange={e => setProfile({...profile, age: e.target.value})} style={{ display: "block", width: "100%", marginBottom: 8, padding: 8 }} />
         <textarea placeholder="Anything else I should know? (optional)" value={profile.notes} onChange={e => setProfile({...profile, notes: e.target.value})} style={{ display: "block", width: "100%", marginBottom: 8, padding: 8 }} rows={3} />
@@ -133,7 +83,7 @@ export default function Home() {
     <main style={{ padding: 24, maxWidth: 500, margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1>AskNeer</h1>
-        <button onClick={signOut} style={{ padding: "6px 12px", cursor: "pointer" }}>Sign out</button>
+        <button onClick={() => signOut()} style={{ padding: "6px 12px", cursor: "pointer" }}>Sign out</button>
       </div>
       <p style={{ color: "#666" }}>Chatting about <strong>{profile.name}</strong>, {profile.age}</p>
       <div style={{ minHeight: 300, marginBottom: 16 }}>
