@@ -16,14 +16,21 @@ export async function GET(request: Request) {
           getAll() { return cookieStore.getAll(); },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              cookieStore.set(name, value, {
+                ...options,
+                sameSite: "lax",
+                secure: true,
+                httpOnly: true,
+              })
             );
           },
         },
       }
     );
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) console.error("Auth error:", error);
   }
 
-  return NextResponse.redirect("https://www.askneer.com");
+  const response = NextResponse.redirect("https://www.askneer.com");
+  return response;
 }
