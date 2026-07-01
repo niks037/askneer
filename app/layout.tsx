@@ -1,16 +1,35 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Providers from "./providers";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export const metadata: Metadata = {
-  title: "AskNeer",
-  description: "Your personal parenting companion",
-};
+  title: 'AskNeer — AI Parenting Companion',
+  description: 'Personalized parenting guidance for your child',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'AskNeer',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#E07A5F',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+      </head>
       <body>
         <Providers>{children}</Providers>
+        <InstallPrompt />
       </body>
     </html>
   );
