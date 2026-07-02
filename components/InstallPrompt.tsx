@@ -15,7 +15,6 @@ export default function InstallPrompt() {
   const [showIOSGuide, setShowIOSGuide] = useState(false)
 
   useEffect(() => {
-    // Already installed — never show button
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true)
       return
@@ -24,17 +23,14 @@ export default function InstallPrompt() {
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
     setIsIOS(iOS)
 
-    // Show button after 2 seconds
     const timer = setTimeout(() => setShowButton(true), 2000)
 
-    // Capture Android prompt
     const handler = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)
     }
     window.addEventListener('beforeinstallprompt', handler)
 
-    // Listen for successful install
     window.addEventListener('appinstalled', () => {
       setIsInstalled(true)
       setShowButton(false)
@@ -48,12 +44,10 @@ export default function InstallPrompt() {
 
   const handleInstallClick = async () => {
     if (isIOS) {
-      // iOS can't be programmatic — must show guide
       setShowIOSGuide(true)
       return
     }
     if (deferredPrompt) {
-      // Android — directly triggers install, no extra steps
       await deferredPrompt.prompt()
       const choice = await deferredPrompt.userChoice
       if (choice.outcome === 'accepted') {
@@ -68,31 +62,26 @@ export default function InstallPrompt() {
 
   return (
     <>
-      {/* Bottom install button */}
-      <div style={{
-        position: 'fixed',
-        bottom: '90px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 1000,
-        animation: 'slideUp 0.3s ease, pulse 2s ease-in-out 1s infinite',
-       }}>
       <style>{`
         @keyframes slideUp {
           from { opacity: 0; transform: translateX(-50%) translateY(20px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         @keyframes pulse {
-          0%, 100% { box-shadow: 0 4px 16px rgba(224,122,95,0.4); }
-          50%       { box-shadow: 0 4px 28px rgba(224,122,95,0.8); }
+          0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 4px 16px rgba(224,122,95,0.5); }
+          50%       { transform: translateX(-50%) scale(1.07); box-shadow: 0 6px 36px rgba(224,122,95,0.95); }
         }
       `}</style>
-        <style>{`
-          @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-          }
-        `}</style>
+
+      {/* Install button */}
+      <div style={{
+        position: 'fixed',
+        bottom: '100px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 1000,
+        animation: 'slideUp 0.3s ease forwards, pulse 1.5s ease-in-out 2.5s infinite',
+      }}>
         <button
           onClick={handleInstallClick}
           style={{
@@ -108,7 +97,6 @@ export default function InstallPrompt() {
             alignItems: 'center',
             gap: '8px',
             whiteSpace: 'nowrap',
-            boxShadow: '0 4px 16px rgba(224,122,95,0.5)',
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -120,7 +108,7 @@ export default function InstallPrompt() {
         </button>
       </div>
 
-      {/* iOS only — minimal step guide since Apple forces manual install */}
+      {/* iOS guide */}
       {showIOSGuide && (
         <div
           onClick={() => setShowIOSGuide(false)}
@@ -146,17 +134,16 @@ export default function InstallPrompt() {
             }}
           >
             <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: '16px', color: '#333' }}>
-              Add AskNeer to Home Screen
+              Get the AskNeer app
             </p>
             <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#888' }}>
-              Apple requires a manual step on iPhone — takes 5 seconds
+              Save to your home screen for instant access — takes 5 seconds
             </p>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {[
-                'Tap the Share button at the bottom of Safari',
+                'Tap the ↑ Share icon in your Safari address bar',
                 'Tap "Add to Home Screen"',
-                'Tap Add — done!',
+                'Tap Add — you\'re all set!',
               ].map((step, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{
@@ -169,7 +156,6 @@ export default function InstallPrompt() {
                 </div>
               ))}
             </div>
-
             <button
               onClick={() => setShowIOSGuide(false)}
               style={{
