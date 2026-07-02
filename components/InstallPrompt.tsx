@@ -81,6 +81,9 @@ export default function InstallPrompt() {
         transform: 'translateX(-50%)',
         zIndex: 1000,
         animation: 'slideUp 0.3s ease forwards, pulse 1.5s ease-in-out 2.5s infinite',
+        background: 'transparent',
+        lineHeight: 0,
+        borderRadius: '24px',
       }}>
         <button
           onClick={handleInstallClick}
