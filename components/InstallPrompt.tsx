@@ -71,12 +71,22 @@ export default function InstallPrompt() {
       {/* Bottom install button */}
       <div style={{
         position: 'fixed',
-        bottom: '24px',
+        bottom: '90px',
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 1000,
-        animation: 'slideUp 0.3s ease',
-      }}>
+        animation: 'slideUp 0.3s ease, pulse 2s ease-in-out 1s infinite',
+       }}>
+      <style>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes pulse {
+          0%, 100% { box-shadow: 0 4px 16px rgba(224,122,95,0.4); }
+          50%       { box-shadow: 0 4px 28px rgba(224,122,95,0.8); }
+        }
+      `}</style>
         <style>{`
           @keyframes slideUp {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
