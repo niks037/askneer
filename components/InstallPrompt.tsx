@@ -15,7 +15,14 @@ export default function InstallPrompt() {
   const [showIOSGuide, setShowIOSGuide] = useState(false)
 
   useEffect(() => {
+    // Check standalone mode (works on mobile)
     if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true)
+      return
+    }
+
+    // Check localStorage flag (works on desktop after install)
+    if (localStorage.getItem('askneer_installed') === 'true') {
       setIsInstalled(true)
       return
     }
@@ -32,6 +39,7 @@ export default function InstallPrompt() {
     window.addEventListener('beforeinstallprompt', handler)
 
     window.addEventListener('appinstalled', () => {
+      localStorage.setItem('askneer_installed', 'true')
       setIsInstalled(true)
       setShowButton(false)
     })
@@ -51,6 +59,7 @@ export default function InstallPrompt() {
       await deferredPrompt.prompt()
       const choice = await deferredPrompt.userChoice
       if (choice.outcome === 'accepted') {
+        localStorage.setItem('askneer_installed', 'true')
         setIsInstalled(true)
         setShowButton(false)
       }
