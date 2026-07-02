@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
+
 export default function Home() {
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
@@ -11,6 +12,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
+  const [showProModal, setShowProModal] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -178,11 +180,45 @@ useEffect(() => {
             <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>{getAge(profile.dob)}</div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={() => { setProfileSaved(false); setMessages([]); setProfile({ name: "", dob: "", notes: "" }); }} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}>+ New Child</button>
-          <button onClick={() => setMessages([])} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}>New Chat</button>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <button
+            onClick={() => setShowProModal(true)}
+            style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}
+          >
+            + New Child <span style={{ fontSize: 11, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
+          </button>
           <button onClick={() => signOut()} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}>Sign out</button>
         </div>
+        {/* Pro gate modal */}
+        {showProModal && (
+          <div
+            onClick={() => setShowProModal(false)}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{ background: "#FFF9F5", borderRadius: 20, padding: 28, maxWidth: 360, width: "100%", textAlign: "center" }}
+            >
+              <div style={{ fontSize: 36, marginBottom: 12 }}>⭐</div>
+              <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#2D2D2D" }}>Multiple children is a Pro feature</h2>
+              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
+                Upgrade to AskNeer Pro to add more children, each with their own personalized chat, vaccines, and milestones.
+              </p>
+              <button
+                onClick={() => { alert("Coming soon! We'll notify you when Pro launches."); setShowProModal(false); }}
+                style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", marginBottom: 10 }}
+              >
+                Upgrade to Pro — $4.99/mo
+              </button>
+              <button
+                onClick={() => setShowProModal(false)}
+                style={{ width: "100%", padding: "12px", background: "none", color: "#aaa", border: "none", fontSize: 14, cursor: "pointer" }}
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Empty state — centered input */}
