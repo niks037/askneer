@@ -68,6 +68,7 @@ export default function InstallPrompt() {
   }
 
   if (isInstalled || !showButton) return null
+  if (!isIOS && !deferredPrompt) return null
 
   return (
     <>
