@@ -110,24 +110,141 @@ export default function Home() {
 
   // ─── Login screen ───────────────────────────────────────────────
   if (!session) return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #FFF9F5 0%, #FFF0E8 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 8 }}>👶</div>
-        <h1 style={{ fontSize: 36, fontWeight: 800, color: "#2D2D2D", margin: 0, letterSpacing: -1 }}>AskNeer</h1>
-        <p style={{ color: "#888", marginTop: 8, fontSize: 16 }}>Your personal parenting companion</p>
-        <p style={{ color: "#aaa", fontSize: 13, marginTop: 4 }}>Powered by NeernMom</p>
-      </div>
-      <div style={{ background: "white", borderRadius: 20, padding: 32, maxWidth: 380, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
-        <h2 style={{ margin: "0 0 8px", fontSize: 22, color: "#2D2D2D" }}>Welcome</h2>
-        <p style={{ color: "#888", margin: "0 0 24px", fontSize: 14, lineHeight: 1.6 }}>Get science-backed parenting guidance personalized to your child - available 24/7.</p>
-        <button onClick={() => signIn("google")} style={{ width: "100%", padding: "14px 24px", background: "white", border: "2px solid #E8E8E8", borderRadius: 12, cursor: "pointer", fontSize: 15, fontWeight: 600, color: "#2D2D2D", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}
-          onMouseOver={e => (e.currentTarget.style.borderColor = "#E07A5F")}
-          onMouseOut={e => (e.currentTarget.style.borderColor = "#E8E8E8")}>
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
+    <div style={{ minHeight: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
+
+      {/* Nav */}
+      <div style={{ background: "white", borderBottom: "1px solid #F0EDED", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 24 }}>👶</span>
+          <span style={{ fontWeight: 800, fontSize: 20, color: "#2D2D2D" }}>AskNeer</span>
+        </div>
+        <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 20, padding: "10px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+          Get Started Free
         </button>
-        <p style={{ color: "#ccc", fontSize: 12, textAlign: "center", marginTop: 16 }}>Free • No credit card required</p>
       </div>
+
+      {/* Hero */}
+      <div style={{ maxWidth: 680, margin: "0 auto", padding: "64px 24px 48px", textAlign: "center" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 99, padding: "6px 14px", marginBottom: 24, fontSize: 13, fontWeight: 600, color: "#E07A5F" }}>
+          ✨ By the creator of NeernMom
+        </div>
+        <h1 style={{ fontSize: "clamp(32px, 6vw, 52px)", fontWeight: 800, color: "#2D2D2D", margin: "0 0 20px", lineHeight: 1.15, letterSpacing: -1 }}>
+          Your child's personal<br />
+          <span style={{ color: "#E07A5F" }}>AI parenting companion</span>
+        </h1>
+        <p style={{ fontSize: 18, color: "#666", lineHeight: 1.7, margin: "0 0 36px", maxWidth: 520, marginLeft: "auto", marginRight: "auto" }}>
+          AskNeer remembers your child's story — allergies, milestones, vaccines — and gives you science-backed parenting guidance that actually knows your little one.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+          <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "16px 36px", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, boxShadow: "0 4px 20px rgba(224,122,95,0.35)" }}
+            onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
+            onMouseOut={e => (e.currentTarget.style.background = "#E07A5F")}>
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Continue with Google — It's Free
+          </button>
+          <p style={{ color: "#aaa", fontSize: 13 }}>No credit card required · 5 free questions every day</p>
+        </div>
+      </div>
+
+      {/* Social proof */}
+      <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
+        <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
+          Built by <strong style={{ color: "#2D2D2D" }}>Nikhil</strong> — creator of NeernMom, trusted by parents across 🇺🇸 🇬🇧 🇵🇭 and beyond
+        </p>
+      </div>
+
+      {/* Features */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "64px 24px" }}>
+        <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#2D2D2D", margin: "0 0 48px", letterSpacing: -0.5 }}>
+          Not a chatbot. A companion that knows your child.
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+          {[
+            { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about your child's allergies, milestones, or daycare once — and it remembers forever. Every answer gets smarter over time." },
+            { emoji: "💉", title: "Vaccine tracker", desc: "Automatically calculates your child's vaccine schedule from their date of birth. See what's due, what's overdue, and mark it done.", pro: true },
+            { emoji: "🌙", title: "Sleep, feeding & more", desc: "Ask anything about your child's sleep, feeding, development, or behavior. Get science-backed answers tailored to their exact age." },
+            { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now — AskNeer is always there. No appointments, no waiting." },
+            { emoji: "👶", title: "Knows your child's age", desc: "Every response is calibrated to your child's exact age in months and years. No generic advice — everything is relevant to where they are right now." },
+            { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it. Stored securely and only accessible to you." },
+          ].map(f => (
+            <div key={f.title} style={{ background: "white", borderRadius: 16, padding: "24px 22px", border: "1px solid #F0EDED", position: "relative" }}>
+              {f.pro && (
+                <span style={{ position: "absolute", top: 16, right: 16, fontSize: 10, fontWeight: 700, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "2px 7px" }}>PRO</span>
+              )}
+              <div style={{ fontSize: 32, marginBottom: 12 }}>{f.emoji}</div>
+              <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 700, color: "#2D2D2D" }}>{f.title}</h3>
+              <p style={{ margin: 0, fontSize: 14, color: "#888", lineHeight: 1.6 }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Pricing */}
+      <div style={{ background: "white", borderTop: "1px solid #F0EDED", padding: "64px 24px" }}>
+        <div style={{ maxWidth: 700, margin: "0 auto" }}>
+          <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#2D2D2D", margin: "0 0 8px", letterSpacing: -0.5 }}>Simple, honest pricing</h2>
+          <p style={{ textAlign: "center", color: "#888", margin: "0 0 40px", fontSize: 15 }}>Start free. Upgrade when you're ready.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+
+            {/* Free */}
+            <div style={{ border: "1.5px solid #F0EDED", borderRadius: 20, padding: "28px 24px" }}>
+              <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 18, color: "#2D2D2D" }}>Free</p>
+              <p style={{ margin: "0 0 20px", fontSize: 13, color: "#aaa" }}>Forever free, no card needed</p>
+              <p style={{ margin: "0 0 24px", fontSize: 36, fontWeight: 800, color: "#2D2D2D" }}>$0<span style={{ fontSize: 16, fontWeight: 400, color: "#aaa" }}>/mo</span></p>
+              {["5 questions per day", "Personalized AI answers", "Remembers your child", "Chat history saved"].map(f => (
+                <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                  <span style={{ color: "#38A169", fontWeight: 700 }}>✓</span>
+                  <span style={{ fontSize: 14, color: "#555" }}>{f}</span>
+                </div>
+              ))}
+              <button onClick={() => signIn("google")} style={{ marginTop: 20, width: "100%", padding: "12px", background: "#F5F5F5", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 600, color: "#555", cursor: "pointer" }}>
+                Get started free
+              </button>
+            </div>
+
+            {/* Pro */}
+            <div style={{ border: "2px solid #E07A5F", borderRadius: 20, padding: "28px 24px", position: "relative", background: "#FFFAF8" }}>
+              <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: "#E07A5F", color: "white", fontSize: 12, fontWeight: 700, borderRadius: 99, padding: "4px 16px" }}>MOST POPULAR</div>
+              <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 18, color: "#2D2D2D" }}>Pro</p>
+              <p style={{ margin: "0 0 20px", fontSize: 13, color: "#aaa" }}>For parents who want more</p>
+              <p style={{ margin: "0 0 24px", fontSize: 36, fontWeight: 800, color: "#E07A5F" }}>$4.99<span style={{ fontSize: 16, fontWeight: 400, color: "#aaa" }}>/mo</span></p>
+              {["Unlimited questions", "Vaccine tracker & reminders", "Multiple children profiles", "Priority responses", "Everything in Free"].map(f => (
+                <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                  <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
+                  <span style={{ fontSize: 14, color: "#555" }}>{f}</span>
+                </div>
+              ))}
+              <button onClick={() => signIn("google")} style={{ marginTop: 20, width: "100%", padding: "12px", background: "#E07A5F", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 600, color: "white", cursor: "pointer" }}>
+                Start with Pro
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Final CTA */}
+      <div style={{ padding: "64px 24px", textAlign: "center" }}>
+        <h2 style={{ fontSize: 28, fontWeight: 800, color: "#2D2D2D", margin: "0 0 12px", letterSpacing: -0.5 }}>
+          Start your parenting journey with Neer
+        </h2>
+        <p style={{ color: "#888", fontSize: 16, margin: "0 0 32px" }}>
+          Join parents across the US, UK, and Philippines who trust AskNeer
+        </p>
+        <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "16px 36px", fontSize: 17, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 20px rgba(224,122,95,0.35)" }}
+          onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
+          onMouseOut={e => (e.currentTarget.style.background = "#E07A5F")}>
+          Get started free →
+        </button>
+      </div>
+
+      {/* Footer */}
+      <div style={{ borderTop: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
+        <p style={{ margin: 0, color: "#ccc", fontSize: 13 }}>
+          © 2025 AskNeer · Powered by NeernMom · <span style={{ color: "#E07A5F" }}>Not a medical service</span>
+        </p>
+      </div>
+
     </div>
   );
 
