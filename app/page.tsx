@@ -224,12 +224,12 @@ export default function Home() {
           </p>
 
           {/* Vaccine button above input — empty state */}
-          <div style={{ width: "100%", maxWidth: 600, marginBottom: 10 }}>
+          <div style={{ marginBottom: 16 }}>
             <button
               onClick={() => setShowVaccines(true)}
-              style={{ width: "100%", padding: "12px 16px", background: "white", border: "1.5px solid #E07A5F", borderRadius: 12, cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              💉 View {profile.name}'s Vaccine Schedule
+              💉 Vaccine Schedule
             </button>
           </div>
 
@@ -274,7 +274,7 @@ export default function Home() {
               {/* Vaccine button above input */}
               <button
                 onClick={() => setShowVaccines(true)}
-                style={{ width: "100%", marginBottom: 8, padding: "9px 16px", background: "#FFF0E8", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
+                style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
               >
                 💉 {profile.name}'s Vaccine Schedule
               </button>
