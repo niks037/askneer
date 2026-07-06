@@ -119,7 +119,7 @@ export default function Home() {
       </div>
       <div style={{ background: "white", borderRadius: 20, padding: 32, maxWidth: 380, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
         <h2 style={{ margin: "0 0 8px", fontSize: 22, color: "#2D2D2D" }}>Welcome</h2>
-        <p style={{ color: "#888", margin: "0 0 24px", fontSize: 14, lineHeight: 1.6 }}>Get science-backed parenting guidance personalized to your child — available 24/7.</p>
+        <p style={{ color: "#888", margin: "0 0 24px", fontSize: 14, lineHeight: 1.6 }}>Get science-backed parenting guidance personalized to your child - available 24/7.</p>
         <button onClick={() => signIn("google")} style={{ width: "100%", padding: "14px 24px", background: "white", border: "2px solid #E8E8E8", borderRadius: 12, cursor: "pointer", fontSize: 15, fontWeight: 600, color: "#2D2D2D", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}
           onMouseOver={e => (e.currentTarget.style.borderColor = "#E07A5F")}
           onMouseOut={e => (e.currentTarget.style.borderColor = "#E8E8E8")}>
@@ -202,10 +202,10 @@ export default function Home() {
             <div style={{ fontSize: 36, marginBottom: 12 }}>⭐</div>
             <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#2D2D2D" }}>Multiple children is a Pro feature</h2>
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
-              Upgrade to AskNeer Pro to add more children, each with their own personalized chat, vaccines, and milestones.
+              Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child.
             </p>
             <button onClick={() => { alert("Coming soon! We'll notify you when Pro launches."); setShowProModal(false); }} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
-              Upgrade to Pro — $4.99/mo
+              Upgrade to Pro - $4.99/mo
             </button>
             <button onClick={() => setShowProModal(false)} style={{ width: "100%", padding: "12px", background: "none", color: "#aaa", border: "none", fontSize: 14, cursor: "pointer" }}>
               Maybe later
@@ -223,13 +223,13 @@ export default function Home() {
             Ask me anything about {profile.name}'s health, sleep, feeding, development, or behavior.
           </p>
 
-          {/* Vaccine button above input — empty state */}
+          {/* Vaccine button above input - empty state */}
           <div style={{ marginBottom: 16 }}>
             <button
-              onClick={() => setShowVaccines(true)}
+              onClick={() => setShowProModal(true)}
               style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              💉 Vaccine Schedule
+              💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
             </button>
           </div>
 
