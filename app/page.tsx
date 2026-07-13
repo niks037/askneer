@@ -209,7 +209,7 @@ export default function Home() {
               <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 18, color: "#2D2D2D" }}>Free</p>
               <p style={{ margin: "0 0 20px", fontSize: 13, color: "#aaa" }}>Forever free, no card needed</p>
               <p style={{ margin: "0 0 24px", fontSize: 36, fontWeight: 800, color: "#2D2D2D" }}>$0<span style={{ fontSize: 16, fontWeight: 400, color: "#aaa" }}>/mo</span></p>
-              {["5 questions per day", "Personalized AI answers", "Remembers your child", "Chat history saved"].map(f => (
+              {["3 questions per day", "Personalized AI answers", "Remembers your child", "Chat history saved"].map(f => (
                 <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                   <span style={{ color: "#38A169", fontWeight: 700 }}>✓</span>
                   <span style={{ fontSize: 14, color: "#555" }}>{f}</span>

@@ -3,9 +3,13 @@ import Providers from "./providers";
 import InstallPrompt from "@/components/InstallPrompt";
 
 export const metadata: Metadata = {
-  title: 'AskNeer — AI Parenting Companion',
+  title: 'AskNeer - AI Parenting Companion',
   description: 'Personalized parenting guidance for your child',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon-192x192.png',
+    apple: '/icon-192x192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
