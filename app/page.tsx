@@ -182,7 +182,7 @@ export default function Home() {
             { emoji: "💉", title: "Vaccine tracker", desc: "Automatically calculates your child's vaccine schedule from their date of birth. See what's due, what's overdue, and mark it done.", pro: true },
             { emoji: "🌙", title: "Sleep, feeding & more", desc: "Ask anything about your child's sleep, feeding, development, or behavior. Get science-backed answers tailored to their exact age." },
             { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now - AskNeer is always there. No appointments, no waiting." },
-            { emoji: "👶", title: "Knows your child's age", desc: "Every response is calibrated to your child's exact age in months and years. No generic advice — everything is relevant to where they are right now." },
+            { emoji: "👶", title: "Knows your child's age", desc: "Every response is calibrated to your child's exact age in months and years. No generic advice - everything is relevant to where they are right now." },
             { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it. Stored securely and only accessible to you." },
           ].map(f => (
             <div key={f.title} style={{ background: "white", borderRadius: 16, padding: "24px 22px", border: "1px solid #F0EDED", position: "relative" }}>
@@ -247,7 +247,7 @@ export default function Home() {
           Start your parenting journey with Neer
         </h2>
         <p style={{ color: "#888", fontSize: 16, margin: "0 0 32px" }}>
-          Join parents across the US, UK, and Philippines who trust AskNeer
+          Join parents across the US, UK, and India who trust AskNeer
         </p>
         <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "16px 36px", fontSize: 17, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 20px rgba(224,122,95,0.35)" }}
           onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
