@@ -167,7 +167,7 @@ export default function Home() {
       {/* Social proof */}
       <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
         <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-          Built by <strong style={{ color: "#2D2D2D" }}>Nikhil</strong> - creator of NeernMom, trusted by parents across 🇺🇸 🇬🇧 🇵🇭 and beyond
+          From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide.
         </p>
       </div>
 
