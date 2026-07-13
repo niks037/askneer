@@ -13,8 +13,15 @@ export default function Home() {
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
+  const [proModalReason, setProModalReason] = useState<'questions' | 'vaccine' | 'newchild'>('newchild');
   const [showVaccines, setShowVaccines] = useState(false);
   const [isPro, setIsPro] = useState(false);
+
+  function handleNewChild() {
+  setProfileSaved(false);
+  setMessages([]);
+  setProfile({ name: "", dob: "", notes: "" });
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -94,6 +101,7 @@ export default function Home() {
     const storedDate = localStorage.getItem("askneer_date");
     const storedCount = parseInt(localStorage.getItem("askneer_count") || "0");
     if (!isPro && storedDate === today && storedCount >= 3) {
+      setProModalReason('questions');
       setShowProModal(true);
       return;
     }
@@ -313,7 +321,7 @@ export default function Home() {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
-            onClick={() => isPro ? setShowVaccines(true) : setShowProModal(true)}
+            onClick={() => isPro ? handleNewChild() : (() => { setProModalReason('newchild'); setShowProModal(true); })()}
             style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}
           >
             + New Child <span style={{ fontSize: 11, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
@@ -326,10 +334,18 @@ export default function Home() {
       {showProModal && (
         <div onClick={() => setShowProModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
           <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: 20, padding: 28, maxWidth: 360, width: "100%", textAlign: "center" }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>⭐</div>
-            <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#2D2D2D" }}>Multiple children is a Pro feature</h2>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>
+              {proModalReason === 'questions' ? '💬' : '⭐'}
+            </div>
+            <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#2D2D2D" }}>
+              {proModalReason === 'questions' && "You've used your 3 free questions today"}
+              {proModalReason === 'vaccine' && "Vaccine tracker is a Pro feature"}
+              {proModalReason === 'newchild' && "Multiple children is a Pro feature"}
+            </h2>
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
-              Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child.
+              {proModalReason === 'questions' && "Upgrade to AskNeer Pro for unlimited questions, vaccine tracking, and multiple children profiles — all personalized to your child."}
+              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions — all personalized to your child."}
+              {proModalReason === 'newchild' && "Upgrade to AskNeer Pro to add more children, each with their own personalized chat, vaccines, and milestones."}
             </p>
             <button onClick={async () => {
               const res = await fetch("/api/lemon/checkout", {
@@ -368,7 +384,7 @@ export default function Home() {
           {/* Vaccine button above input - empty state */}
           <div style={{ marginBottom: 16 }}>
             <button
-              onClick={() => isPro ? setShowVaccines(true) : setShowProModal(true)}
+              onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
               style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
               💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
