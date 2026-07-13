@@ -259,7 +259,7 @@ export default function Home() {
       {/* Footer */}
       <div style={{ borderTop: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
         <p style={{ margin: 0, color: "#ccc", fontSize: 13 }}>
-          © 2025 AskNeer · Powered by NeernMom · <span style={{ color: "#E07A5F" }}>Not a medical service</span>
+          © 2026 AskNeer · Powered by NeernMom · <span style={{ color: "#E07A5F" }}>Not a medical service</span>
         </p>
       </div>
 
@@ -375,7 +375,7 @@ export default function Home() {
       {/* Empty state */}
       {messages.length === 0 ? (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>💬</div>
+          <div style={{ background: "#E07A5F", borderRadius: "50%", width: 64, height: 64, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 28, marginBottom: 16 }}>N</div>
           <h2 style={{ color: "#2D2D2D", margin: "0 0 8px", fontSize: 22 }}>Hi! I'm AskNeer</h2>
           <p style={{ color: "#888", margin: "0 0 32px", fontSize: 15, textAlign: "center", maxWidth: 400 }}>
             Ask me anything about {profile.name}'s health, sleep, feeding, development, or behavior.
@@ -385,7 +385,7 @@ export default function Home() {
           <div style={{ marginBottom: 16 }}>
             <button
               onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
-              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
+              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 8 }}
             >
               💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
             </button>
@@ -406,7 +406,7 @@ export default function Home() {
               {messages.map((m, i) => (
                 <div key={i} style={{ marginBottom: 16, display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
                   {m.role === "assistant" && (
-                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#FFF0E8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, marginRight: 10, flexShrink: 0, marginTop: 2 }}>👶</div>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14, marginRight: 10, flexShrink: 0, marginTop: 2 }}>N</div>
                   )}
                   <div style={{ background: m.role === "user" ? "#E07A5F" : "white", color: m.role === "user" ? "white" : "#2D2D2D", padding: "12px 16px", borderRadius: m.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px", maxWidth: "72%", fontSize: 15, lineHeight: 1.7, boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
                     {m.content}
@@ -415,7 +415,7 @@ export default function Home() {
               ))}
               {chatLoading && (
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#FFF0E8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>👶</div>
+                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14 }}>N</div>
                   <div style={{ background: "white", padding: "12px 16px", borderRadius: "18px 18px 18px 4px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", display: "flex", gap: 4, alignItems: "center" }}>
                     <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#E07A5F", opacity: 0.4 }} />
                     <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#E07A5F", opacity: 0.6 }} />
