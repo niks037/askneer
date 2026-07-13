@@ -151,7 +151,7 @@ export default function Home() {
           <span style={{ color: "#E07A5F" }}>AI parenting companion</span>
         </h1>
         <p style={{ fontSize: 18, color: "#666", lineHeight: 1.7, margin: "0 0 36px", maxWidth: 520, marginLeft: "auto", marginRight: "auto" }}>
-          AskNeer remembers your child's story — allergies, milestones, vaccines — and gives you science-backed parenting guidance that actually knows your little one.
+          AskNeer remembers your child's story - allergies, milestones, vaccines - and gives you science-backed parenting guidance that actually knows your little one.
         </p>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
           <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "16px 36px", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, boxShadow: "0 4px 20px rgba(224,122,95,0.35)" }}
@@ -160,14 +160,14 @@ export default function Home() {
             <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Continue with Google — It's Free
           </button>
-          <p style={{ color: "#aaa", fontSize: 13 }}>No credit card required · 5 free questions every day</p>
+          <p style={{ color: "#aaa", fontSize: 13 }}>No credit card required · 3 free questions every day</p>
         </div>
       </div>
 
       {/* Social proof */}
       <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
         <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-          Built by <strong style={{ color: "#2D2D2D" }}>Nikhil</strong> — creator of NeernMom, trusted by parents across 🇺🇸 🇬🇧 🇵🇭 and beyond
+          Built by <strong style={{ color: "#2D2D2D" }}>Nikhil</strong> - creator of NeernMom, trusted by parents across 🇺🇸 🇬🇧 🇵🇭 and beyond
         </p>
       </div>
 
@@ -178,10 +178,10 @@ export default function Home() {
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
           {[
-            { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about your child's allergies, milestones, or daycare once — and it remembers forever. Every answer gets smarter over time." },
+            { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about your child's allergies, milestones, or daycare once - and it remembers forever. Every answer gets smarter over time." },
             { emoji: "💉", title: "Vaccine tracker", desc: "Automatically calculates your child's vaccine schedule from their date of birth. See what's due, what's overdue, and mark it done.", pro: true },
             { emoji: "🌙", title: "Sleep, feeding & more", desc: "Ask anything about your child's sleep, feeding, development, or behavior. Get science-backed answers tailored to their exact age." },
-            { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now — AskNeer is always there. No appointments, no waiting." },
+            { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now - AskNeer is always there. No appointments, no waiting." },
             { emoji: "👶", title: "Knows your child's age", desc: "Every response is calibrated to your child's exact age in months and years. No generic advice — everything is relevant to where they are right now." },
             { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it. Stored securely and only accessible to you." },
           ].map(f => (
