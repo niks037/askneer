@@ -14,9 +14,18 @@ export default function Home() {
   const [chatLoading, setChatLoading] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
   const [showVaccines, setShowVaccines] = useState(false);
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Check if returning from successful upgrade
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgraded") === "true") {
+      // Remove the query param from URL cleanly
+      window.history.replaceState({}, "", "/");
+      // Reload profile to get updated Pro status
+      setTimeout(() => loadProfile(), 2000);
+    }
   }, []);
 
   useEffect(() => {
@@ -54,6 +63,7 @@ export default function Home() {
     if (data.profile) {
       setProfile({ name: data.profile.child_name, dob: data.profile.child_dob, notes: data.profile.child_notes || "" });
       setProfileSaved(true);
+      setIsPro(data.profile.is_pro || false);
     }
     const chatRes = await fetch(`/api/messages?email=${session.user.email}`);
     const chatData = await chatRes.json();
@@ -83,8 +93,8 @@ export default function Home() {
     const today = new Date().toDateString();
     const storedDate = localStorage.getItem("askneer_date");
     const storedCount = parseInt(localStorage.getItem("askneer_count") || "0");
-    if (storedDate === today && storedCount >= 5) {
-      alert("You've used your 5 free questions for today! Upgrade to AskNeer Pro for unlimited questions.");
+    if (!isPro && storedDate === today && storedCount >= 3) {
+      setShowProModal(true);
       return;
     }
     if (storedDate !== today) {
@@ -303,7 +313,7 @@ export default function Home() {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
-            onClick={() => setShowProModal(true)}
+            onClick={() => isPro ? setShowVaccines(true) : setShowProModal(true)}
             style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}
           >
             + New Child <span style={{ fontSize: 11, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
@@ -321,7 +331,22 @@ export default function Home() {
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
               Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child.
             </p>
-            <button onClick={() => { alert("Coming soon! We'll notify you when Pro launches."); setShowProModal(false); }} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+            <button onClick={async () => {
+              const res = await fetch("/api/lemon/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: session?.user?.email,
+                  name: session?.user?.name,
+                }),
+              });
+              const data = await res.json();
+              if (data.url) {
+                window.location.href = data.url;
+              } else {
+                alert("Something went wrong. Please try again.");
+              }
+            }} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
               Upgrade to Pro - $4.99/mo
             </button>
             <button onClick={() => setShowProModal(false)} style={{ width: "100%", padding: "12px", background: "none", color: "#aaa", border: "none", fontSize: 14, cursor: "pointer" }}>
@@ -343,7 +368,7 @@ export default function Home() {
           {/* Vaccine button above input - empty state */}
           <div style={{ marginBottom: 16 }}>
             <button
-              onClick={() => setShowProModal(true)}
+              onClick={() => isPro ? setShowVaccines(true) : setShowProModal(true)}
               style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
               💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
