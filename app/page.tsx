@@ -6,7 +6,7 @@ import VaccineTracker from "@/components/VaccineTracker";
 export default function Home() {
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
-  const [profile, setProfile] = useState({ name: "", dob: "", notes: "" });
+  const [profile, setProfile] = useState({ name: "", dob: "", notes: "", child_id: "" });
   const [profileSaved, setProfileSaved] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const [input, setInput] = useState("");
@@ -16,11 +16,15 @@ export default function Home() {
   const [proModalReason, setProModalReason] = useState<'questions' | 'vaccine' | 'newchild'>('newchild');
   const [showVaccines, setShowVaccines] = useState(false);
   const [isPro, setIsPro] = useState(false);
+  const [children, setChildren] = useState<any[]>([]);
+  const [showChildPicker, setShowChildPicker] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editProfile, setEditProfile] = useState({ name: "", dob: "", notes: "" });
 
   function handleNewChild() {
-  setProfileSaved(false);
+  setProfile({ name: "", dob: "", notes: "", child_id: "" });
   setMessages([]);
-  setProfile({ name: "", dob: "", notes: "" });
+  setProfileSaved(false);
   }
 
   useEffect(() => {
@@ -61,32 +65,74 @@ export default function Home() {
   }
 
   async function loadProfile() {
-    if (!session?.user?.email) {
-      setProfileLoading(false);
-      return;
-    }
-    const res = await fetch(`/api/profile?email=${session.user.email}`);
-    const data = await res.json();
-    if (data.profile) {
-      setProfile({ name: data.profile.child_name, dob: data.profile.child_dob, notes: data.profile.child_notes || "" });
-      setProfileSaved(true);
-      setIsPro(data.profile.is_pro || false);
-    }
-    const chatRes = await fetch(`/api/messages?email=${session.user.email}`);
-    const chatData = await chatRes.json();
-    if (chatData.messages?.length > 0) {
-      setMessages(chatData.messages);
-    }
+  if (!session?.user?.email) {
     setProfileLoading(false);
+    return;
   }
+  const res = await fetch(`/api/profile?email=${session.user.email}`);
+  const data = await res.json();
+  if (data.profile) {
+    setProfile({ 
+      name: data.profile.child_name, 
+      dob: data.profile.child_dob, 
+      notes: data.profile.child_notes || "",
+      child_id: data.profile.child_id 
+    });
+    setProfileSaved(true);
+    setIsPro(data.profile.is_pro || false);
+  }
+  if (data.children) {
+    setChildren(data.children);
+  }
+  const chatRes = await fetch(`/api/messages?email=${session.user.email}`);
+  const chatData = await chatRes.json();
+  if (chatData.messages?.length > 0) {
+    setMessages(chatData.messages);
+  }
+  setProfileLoading(false);
+}
 
   async function saveProfileToDB(p: typeof profile) {
     if (!session?.user?.email) return;
     await fetch("/api/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session.user.email, child_name: p.name, child_dob: p.dob, child_notes: p.notes })
+      body: JSON.stringify({ 
+        email: session.user.email, 
+        child_name: p.name, 
+        child_dob: p.dob, 
+        child_notes: p.notes,
+        child_id: p.child_id || null
+      })
     });
+  }
+
+  async function switchChild(child: any) {
+    // Switch active child in Supabase
+    await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        email: session?.user?.email, 
+        child_id: child.child_id 
+      })
+    });
+    
+    setProfile({ 
+      name: child.child_name, 
+      dob: child.child_dob, 
+      notes: child.child_notes || "",
+      child_id: child.child_id
+    });
+    setMessages([]);
+    setShowChildPicker(false);
+    
+    // Load this child's chat history
+    const chatRes = await fetch(`/api/messages?email=${session?.user?.email}`);
+    const chatData = await chatRes.json();
+    if (chatData.messages?.length > 0) {
+      setMessages(chatData.messages);
+    }
   }
 
   function saveProfile() {
@@ -313,9 +359,22 @@ export default function Home() {
       {/* Header */}
       <div style={{ background: "white", padding: "12px 20px", borderBottom: "1px solid #F0F0F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 16 }}>N</div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D" }}>{profile.name}</div>
+          {/* N avatar — tap to edit profile */}
+          <div
+            onClick={() => { setEditProfile({ name: profile.name, dob: profile.dob, notes: profile.notes }); setShowEditProfile(true); }}
+            style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 16, cursor: "pointer" }}
+            >
+            {profile.name?.[0]?.toUpperCase() || "N"}
+          </div>
+          {/* Child name — tap to switch child */}
+          <div
+            onClick={() => children.length > 1 && setShowChildPicker(true)}
+            style={{ cursor: children.length > 1 ? "pointer" : "default" }}
+          >
+            <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D", display: "flex", alignItems: "center", gap: 4 }}>
+              {profile.name}
+              {children.length > 1 && <span style={{ fontSize: 10, color: "#aaa" }}>▼</span>}
+            </div>
             <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>{getAge(profile.dob)}</div>
           </div>
         </div>
@@ -369,13 +428,95 @@ export default function Home() {
               Maybe later
             </button>
           </div>
+
+                      {/* Edit Profile Panel */}
+            {showEditProfile && (
+              <div onClick={() => setShowEditProfile(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 0 0" }}>
+                <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
+                  <div style={{ width: 40, height: 4, background: "#E0D8D4", borderRadius: 99, margin: "0 auto 20px" }} />
+                  <h3 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700, color: "#2D2D2D" }}>Edit {profile.name}'s profile</h3>
+                  <label style={{ display: "block", marginBottom: 14 }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Child's name</span>
+                    <input value={editProfile.name} onChange={e => setEditProfile({...editProfile, name: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                      onFocus={e => e.target.style.borderColor = "#E07A5F"}
+                      onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
+                  </label>
+                  <label style={{ display: "block", marginBottom: 14 }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Date of birth</span>
+                    <input type="date" value={editProfile.dob} onChange={e => setEditProfile({...editProfile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                      onFocus={e => e.target.style.borderColor = "#E07A5F"}
+                      onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
+                  </label>
+                  <label style={{ display: "block", marginBottom: 20 }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Notes <span style={{ fontWeight: 400, color: "#aaa" }}>(optional)</span></span>
+                    <textarea value={editProfile.notes} onChange={e => setEditProfile({...editProfile, notes: e.target.value})} rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
+                      onFocus={e => e.target.style.borderColor = "#E07A5F"}
+                      onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
+                  </label>
+                  <button onClick={async () => {
+                    await fetch("/api/profile", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        email: session?.user?.email,
+                        child_name: editProfile.name,
+                        child_dob: editProfile.dob,
+                        child_notes: editProfile.notes,
+                        child_id: profile.child_id
+                      })
+                    });
+                    setProfile({ ...profile, name: editProfile.name, dob: editProfile.dob, notes: editProfile.notes });
+                    setShowEditProfile(false);
+                  }} style={{ width: "100%", padding: 14, background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                    Save changes
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Child Picker */}
+            {showChildPicker && (
+              <div onClick={() => setShowChildPicker(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 0 0" }}>
+                <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
+                  <div style={{ width: 40, height: 4, background: "#E0D8D4", borderRadius: 99, margin: "0 auto 20px" }} />
+                  <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#2D2D2D" }}>Switch child</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {children.map(child => (
+                      <div
+                        key={child.child_id}
+                        onClick={() => switchChild(child)}
+                        style={{
+                          padding: "14px 16px", borderRadius: 12, cursor: "pointer",
+                          background: child.child_id === profile.child_id ? "#FFF0E8" : "white",
+                          border: child.child_id === profile.child_id ? "2px solid #E07A5F" : "1px solid #F0F0F0",
+                          display: "flex", alignItems: "center", gap: 12
+                        }}
+                      >
+                        <div style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 15 }}>
+                          {child.child_name?.[0]?.toUpperCase() || "N"}
+                        </div>
+                        <div>
+                          <p style={{ margin: 0, fontWeight: 600, fontSize: 15, color: "#2D2D2D" }}>{child.child_name}</p>
+                          <p style={{ margin: 0, fontSize: 12, color: "#999" }}>{getAge(child.child_dob)}</p>
+                        </div>
+                        {child.child_id === profile.child_id && (
+                          <span style={{ marginLeft: "auto", fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>Active</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
         </div>
       )}
 
       {/* Empty state */}
       {messages.length === 0 ? (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
-          <div style={{ background: "#E07A5F", borderRadius: "50%", width: 64, height: 64, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 28, marginBottom: 16 }}>N</div>
+          <div style={{ background: "#E07A5F", borderRadius: "50%", width: 64, height: 64, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 28, marginBottom: 16 }}>
+            {profile.name?.[0]?.toUpperCase() || "N"}
+          </div>
           <h2 style={{ color: "#2D2D2D", margin: "0 0 8px", fontSize: 22 }}>Hi! I'm AskNeer</h2>
           <p style={{ color: "#888", margin: "0 0 32px", fontSize: 15, textAlign: "center", maxWidth: 400 }}>
             Ask me anything about {profile.name}'s health, sleep, feeding, development, or behavior.
@@ -406,7 +547,9 @@ export default function Home() {
               {messages.map((m, i) => (
                 <div key={i} style={{ marginBottom: 16, display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
                   {m.role === "assistant" && (
-                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14, marginRight: 10, flexShrink: 0, marginTop: 2 }}>N</div>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14, marginRight: 10, flexShrink: 0, marginTop: 2 }}>
+                      {profile.name?.[0]?.toUpperCase() || "N"}
+                    </div>
                   )}
                   <div style={{ background: m.role === "user" ? "#E07A5F" : "white", color: m.role === "user" ? "white" : "#2D2D2D", padding: "12px 16px", borderRadius: m.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px", maxWidth: "72%", fontSize: 15, lineHeight: 1.7, boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
                     {m.content}
@@ -415,7 +558,9 @@ export default function Home() {
               ))}
               {chatLoading && (
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14 }}>N</div>
+                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14 }}>
+                    {profile.name?.[0]?.toUpperCase() || "N"}
+                  </div>
                   <div style={{ background: "white", padding: "12px 16px", borderRadius: "18px 18px 18px 4px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", display: "flex", gap: 4, alignItems: "center" }}>
                     <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#E07A5F", opacity: 0.4 }} />
                     <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#E07A5F", opacity: 0.6 }} />
