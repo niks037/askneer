@@ -20,21 +20,19 @@ export default function Home() {
   const [showChildPicker, setShowChildPicker] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editProfile, setEditProfile] = useState({ name: "", dob: "", notes: "" });
+  const [avatarHovered, setAvatarHovered] = useState(false);
 
   function handleNewChild() {
-  setProfile({ name: "", dob: "", notes: "", child_id: "" });
-  setMessages([]);
-  setProfileSaved(false);
+    setProfile({ name: "", dob: "", notes: "", child_id: "" });
+    setMessages([]);
+    setProfileSaved(false);
   }
 
   useEffect(() => {
     setMounted(true);
-    // Check if returning from successful upgrade
     const params = new URLSearchParams(window.location.search);
     if (params.get("upgraded") === "true") {
-      // Remove the query param from URL cleanly
       window.history.replaceState({}, "", "/");
-      // Reload profile to get updated Pro status
       setTimeout(() => loadProfile(), 2000);
     }
   }, []);
@@ -65,42 +63,42 @@ export default function Home() {
   }
 
   async function loadProfile() {
-  if (!session?.user?.email) {
+    if (!session?.user?.email) {
+      setProfileLoading(false);
+      return;
+    }
+    const res = await fetch(`/api/profile?email=${session.user.email}`);
+    const data = await res.json();
+    if (data.profile) {
+      setProfile({
+        name: data.profile.child_name,
+        dob: data.profile.child_dob,
+        notes: data.profile.child_notes || "",
+        child_id: data.profile.child_id
+      });
+      setProfileSaved(true);
+      setIsPro(data.profile.is_pro || false);
+    }
+    if (data.children) {
+      setChildren(data.children);
+    }
+    const chatRes = await fetch(`/api/messages?email=${session.user.email}`);
+    const chatData = await chatRes.json();
+    if (chatData.messages?.length > 0) {
+      setMessages(chatData.messages);
+    }
     setProfileLoading(false);
-    return;
   }
-  const res = await fetch(`/api/profile?email=${session.user.email}`);
-  const data = await res.json();
-  if (data.profile) {
-    setProfile({ 
-      name: data.profile.child_name, 
-      dob: data.profile.child_dob, 
-      notes: data.profile.child_notes || "",
-      child_id: data.profile.child_id 
-    });
-    setProfileSaved(true);
-    setIsPro(data.profile.is_pro || false);
-  }
-  if (data.children) {
-    setChildren(data.children);
-  }
-  const chatRes = await fetch(`/api/messages?email=${session.user.email}`);
-  const chatData = await chatRes.json();
-  if (chatData.messages?.length > 0) {
-    setMessages(chatData.messages);
-  }
-  setProfileLoading(false);
-}
 
   async function saveProfileToDB(p: typeof profile) {
     if (!session?.user?.email) return;
     await fetch("/api/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        email: session.user.email, 
-        child_name: p.name, 
-        child_dob: p.dob, 
+      body: JSON.stringify({
+        email: session.user.email,
+        child_name: p.name,
+        child_dob: p.dob,
         child_notes: p.notes,
         child_id: p.child_id || null
       })
@@ -108,26 +106,22 @@ export default function Home() {
   }
 
   async function switchChild(child: any) {
-    // Switch active child in Supabase
     await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        email: session?.user?.email, 
-        child_id: child.child_id 
+      body: JSON.stringify({
+        email: session?.user?.email,
+        child_id: child.child_id
       })
     });
-    
-    setProfile({ 
-      name: child.child_name, 
-      dob: child.child_dob, 
+    setProfile({
+      name: child.child_name,
+      dob: child.child_dob,
       notes: child.child_notes || "",
       child_id: child.child_id
     });
     setMessages([]);
     setShowChildPicker(false);
-    
-    // Load this child's chat history
     const chatRes = await fetch(`/api/messages?email=${session?.user?.email}`);
     const chatData = await chatRes.json();
     if (chatData.messages?.length > 0) {
@@ -175,7 +169,6 @@ export default function Home() {
   // ─── Login screen ───────────────────────────────────────────────
   if (!session) return (
     <div style={{ minHeight: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
-
       {/* Nav */}
       <div style={{ background: "white", borderBottom: "1px solid #F0EDED", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -213,7 +206,7 @@ export default function Home() {
       {/* Social proof */}
       <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
         <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-          From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide.
+          From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
         </p>
       </div>
 
@@ -249,7 +242,6 @@ export default function Home() {
           <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#2D2D2D", margin: "0 0 8px", letterSpacing: -0.5 }}>Simple, honest pricing</h2>
           <p style={{ textAlign: "center", color: "#888", margin: "0 0 40px", fontSize: 15 }}>Start free. Upgrade when you're ready.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-
             {/* Free */}
             <div style={{ border: "1.5px solid #F0EDED", borderRadius: 20, padding: "28px 24px" }}>
               <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 18, color: "#2D2D2D" }}>Free</p>
@@ -265,7 +257,6 @@ export default function Home() {
                 Get started free
               </button>
             </div>
-
             {/* Pro */}
             <div style={{ border: "2px solid #E07A5F", borderRadius: 20, padding: "28px 24px", position: "relative", background: "#FFFAF8" }}>
               <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: "#E07A5F", color: "white", fontSize: 12, fontWeight: 700, borderRadius: 99, padding: "4px 16px" }}>MOST POPULAR</div>
@@ -282,7 +273,6 @@ export default function Home() {
                 Start with Pro
               </button>
             </div>
-
           </div>
         </div>
       </div>
@@ -293,7 +283,7 @@ export default function Home() {
           Start your parenting journey with Neer
         </h2>
         <p style={{ color: "#888", fontSize: 16, margin: "0 0 32px" }}>
-          Join parents across the US, UK, and India who trust AskNeer
+          Join parents across the US, UK, and Philippines who trust AskNeer
         </p>
         <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "16px 36px", fontSize: 17, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 20px rgba(224,122,95,0.35)" }}
           onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
@@ -308,7 +298,6 @@ export default function Home() {
           © 2026 AskNeer · Powered by NeernMom · <span style={{ color: "#E07A5F" }}>Not a medical service</span>
         </p>
       </div>
-
     </div>
   );
 
@@ -359,14 +348,25 @@ export default function Home() {
       {/* Header */}
       <div style={{ background: "white", padding: "12px 20px", borderBottom: "1px solid #F0F0F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {/* N avatar — tap to edit profile */}
+
+          {/* Avatar — hover shows edit icon, click opens edit panel */}
           <div
+            onMouseEnter={() => setAvatarHovered(true)}
+            onMouseLeave={() => setAvatarHovered(false)}
             onClick={() => { setEditProfile({ name: profile.name, dob: profile.dob, notes: profile.notes }); setShowEditProfile(true); }}
-            style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 16, cursor: "pointer" }}
-            >
-            {profile.name?.[0]?.toUpperCase() || "N"}
+            style={{ position: "relative", background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 16, cursor: "pointer", flexShrink: 0 }}
+          >
+            {avatarHovered ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            ) : (
+              profile.name?.[0]?.toUpperCase() || "N"
+            )}
           </div>
-          {/* Child name — tap to switch child */}
+
+          {/* Child name — tap to switch if multiple children */}
           <div
             onClick={() => children.length > 1 && setShowChildPicker(true)}
             style={{ cursor: children.length > 1 ? "pointer" : "default" }}
@@ -378,6 +378,7 @@ export default function Home() {
             <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>{getAge(profile.dob)}</div>
           </div>
         </div>
+
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
             onClick={() => isPro ? handleNewChild() : (() => { setProModalReason('newchild'); setShowProModal(true); })()}
@@ -410,10 +411,7 @@ export default function Home() {
               const res = await fetch("/api/lemon/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  email: session?.user?.email,
-                  name: session?.user?.name,
-                }),
+                body: JSON.stringify({ email: session?.user?.email, name: session?.user?.name }),
               });
               const data = await res.json();
               if (data.url) {
@@ -428,86 +426,86 @@ export default function Home() {
               Maybe later
             </button>
           </div>
+        </div>
+      )}
 
-                      {/* Edit Profile Panel */}
-            {showEditProfile && (
-              <div onClick={() => setShowEditProfile(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 0 0" }}>
-                <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
-                  <div style={{ width: 40, height: 4, background: "#E0D8D4", borderRadius: 99, margin: "0 auto 20px" }} />
-                  <h3 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700, color: "#2D2D2D" }}>Edit {profile.name}'s profile</h3>
-                  <label style={{ display: "block", marginBottom: 14 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Child's name</span>
-                    <input value={editProfile.name} onChange={e => setEditProfile({...editProfile, name: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
-                      onFocus={e => e.target.style.borderColor = "#E07A5F"}
-                      onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
-                  </label>
-                  <label style={{ display: "block", marginBottom: 14 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Date of birth</span>
-                    <input type="date" value={editProfile.dob} onChange={e => setEditProfile({...editProfile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
-                      onFocus={e => e.target.style.borderColor = "#E07A5F"}
-                      onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
-                  </label>
-                  <label style={{ display: "block", marginBottom: 20 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Notes <span style={{ fontWeight: 400, color: "#aaa" }}>(optional)</span></span>
-                    <textarea value={editProfile.notes} onChange={e => setEditProfile({...editProfile, notes: e.target.value})} rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
-                      onFocus={e => e.target.style.borderColor = "#E07A5F"}
-                      onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
-                  </label>
-                  <button onClick={async () => {
-                    await fetch("/api/profile", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        email: session?.user?.email,
-                        child_name: editProfile.name,
-                        child_dob: editProfile.dob,
-                        child_notes: editProfile.notes,
-                        child_id: profile.child_id
-                      })
-                    });
-                    setProfile({ ...profile, name: editProfile.name, dob: editProfile.dob, notes: editProfile.notes });
-                    setShowEditProfile(false);
-                  }} style={{ width: "100%", padding: 14, background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                    Save changes
-                  </button>
-                </div>
-              </div>
-            )}
+      {/* Edit Profile Panel — correctly outside Pro modal */}
+      {showEditProfile && (
+        <div onClick={() => setShowEditProfile(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
+            <div style={{ width: 40, height: 4, background: "#E0D8D4", borderRadius: 99, margin: "0 auto 20px" }} />
+            <h3 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700, color: "#2D2D2D" }}>Edit {profile.name}'s profile</h3>
+            <label style={{ display: "block", marginBottom: 14 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Child's name</span>
+              <input value={editProfile.name} onChange={e => setEditProfile({...editProfile, name: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                onFocus={e => e.target.style.borderColor = "#E07A5F"}
+                onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
+            </label>
+            <label style={{ display: "block", marginBottom: 14 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Date of birth</span>
+              <input type="date" value={editProfile.dob} onChange={e => setEditProfile({...editProfile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                onFocus={e => e.target.style.borderColor = "#E07A5F"}
+                onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
+            </label>
+            <label style={{ display: "block", marginBottom: 20 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Notes <span style={{ fontWeight: 400, color: "#aaa" }}>(optional)</span></span>
+              <textarea value={editProfile.notes} onChange={e => setEditProfile({...editProfile, notes: e.target.value})} rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
+                onFocus={e => e.target.style.borderColor = "#E07A5F"}
+                onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
+            </label>
+            <button onClick={async () => {
+              await fetch("/api/profile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: session?.user?.email,
+                  child_name: editProfile.name,
+                  child_dob: editProfile.dob,
+                  child_notes: editProfile.notes,
+                  child_id: profile.child_id
+                })
+              });
+              setProfile({ ...profile, name: editProfile.name, dob: editProfile.dob, notes: editProfile.notes });
+              setShowEditProfile(false);
+            }} style={{ width: "100%", padding: 14, background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+              Save changes
+            </button>
+          </div>
+        </div>
+      )}
 
-            {/* Child Picker */}
-            {showChildPicker && (
-              <div onClick={() => setShowChildPicker(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 0 0" }}>
-                <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
-                  <div style={{ width: 40, height: 4, background: "#E0D8D4", borderRadius: 99, margin: "0 auto 20px" }} />
-                  <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#2D2D2D" }}>Switch child</h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {children.map(child => (
-                      <div
-                        key={child.child_id}
-                        onClick={() => switchChild(child)}
-                        style={{
-                          padding: "14px 16px", borderRadius: 12, cursor: "pointer",
-                          background: child.child_id === profile.child_id ? "#FFF0E8" : "white",
-                          border: child.child_id === profile.child_id ? "2px solid #E07A5F" : "1px solid #F0F0F0",
-                          display: "flex", alignItems: "center", gap: 12
-                        }}
-                      >
-                        <div style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 15 }}>
-                          {child.child_name?.[0]?.toUpperCase() || "N"}
-                        </div>
-                        <div>
-                          <p style={{ margin: 0, fontWeight: 600, fontSize: 15, color: "#2D2D2D" }}>{child.child_name}</p>
-                          <p style={{ margin: 0, fontSize: 12, color: "#999" }}>{getAge(child.child_dob)}</p>
-                        </div>
-                        {child.child_id === profile.child_id && (
-                          <span style={{ marginLeft: "auto", fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>Active</span>
-                        )}
-                      </div>
-                    ))}
+      {/* Child Picker — correctly outside Pro modal */}
+      {showChildPicker && (
+        <div onClick={() => setShowChildPicker(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
+            <div style={{ width: 40, height: 4, background: "#E0D8D4", borderRadius: 99, margin: "0 auto 20px" }} />
+            <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#2D2D2D" }}>Switch child</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {children.map(child => (
+                <div
+                  key={child.child_id}
+                  onClick={() => switchChild(child)}
+                  style={{
+                    padding: "14px 16px", borderRadius: 12, cursor: "pointer",
+                    background: child.child_id === profile.child_id ? "#FFF0E8" : "white",
+                    border: child.child_id === profile.child_id ? "2px solid #E07A5F" : "1px solid #F0F0F0",
+                    display: "flex", alignItems: "center", gap: 12
+                  }}
+                >
+                  <div style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 15 }}>
+                    {child.child_name?.[0]?.toUpperCase() || "N"}
                   </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: 15, color: "#2D2D2D" }}>{child.child_name}</p>
+                    <p style={{ margin: 0, fontSize: 12, color: "#999" }}>{getAge(child.child_dob)}</p>
+                  </div>
+                  {child.child_id === profile.child_id && (
+                    <span style={{ marginLeft: "auto", fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>Active</span>
+                  )}
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -521,17 +519,14 @@ export default function Home() {
           <p style={{ color: "#888", margin: "0 0 32px", fontSize: 15, textAlign: "center", maxWidth: 400 }}>
             Ask me anything about {profile.name}'s health, sleep, feeding, development, or behavior.
           </p>
-
-          {/* Vaccine button above input - empty state */}
           <div style={{ marginBottom: 16 }}>
             <button
               onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
-              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 8 }}
+              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
               💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
             </button>
           </div>
-
           <div style={{ width: "100%", maxWidth: 600, display: "flex", gap: 10, alignItems: "flex-end" }}>
             <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }}} rows={2} placeholder={`Ask about ${profile.name}...`} style={{ flex: 1, padding: "14px 16px", border: "2px solid #F0F0F0", borderRadius: 16, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
@@ -571,16 +566,17 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Bottom input with vaccine button above it */}
+          {/* Bottom input */}
           <div style={{ background: "white", borderTop: "1px solid #F0F0F0", padding: "10px 16px 12px" }}>
             <div style={{ maxWidth: 800, margin: "0 auto" }}>
-              {/* Vaccine button above input */}
-              <button
-                onClick={() => setShowVaccines(true)}
-                style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
-              >
-                💉 {profile.name}'s Vaccine Schedule
-              </button>
+              <div style={{ marginBottom: 8 }}>
+                <button
+                  onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
+                  style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
+                </button>
+              </div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
                 <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }}} rows={2} placeholder={`Ask about ${profile.name}...`} style={{ flex: 1, padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 12, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5 }}
                   onFocus={e => e.target.style.borderColor = "#E07A5F"}
