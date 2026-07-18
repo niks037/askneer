@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import VaccineTracker from "@/components/VaccineTracker";
+import ChildSnapshot from "@/components/ChildSnapshot";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -21,6 +22,8 @@ export default function Home() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editProfile, setEditProfile] = useState({ name: "", dob: "", notes: "" });
   const [avatarHovered, setAvatarHovered] = useState(false);
+  const [memories, setMemories] = useState<string[]>([]);
+  const [nextVaccine, setNextVaccine] = useState<{name: string, due_date: string} | null>(null);
 
   function handleNewChild() {
     setProfile({ name: "", dob: "", notes: "", child_id: "" });
@@ -86,6 +89,21 @@ export default function Home() {
     const chatData = await chatRes.json();
     if (chatData.messages?.length > 0) {
       setMessages(chatData.messages);
+    }
+    // Fetch memories for snapshot
+    const memRes = await fetch(`/api/memories?email=${session.user.email}`);
+    const memData = await memRes.json();
+    if (memData.memories) setMemories(memData.memories);
+
+    // Fetch next upcoming vaccine
+    const vacRes = await fetch(`/api/vaccines?email=${encodeURIComponent(session.user.email)}&child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
+    const vacData = await vacRes.json();
+    if (vacData.vaccines) {
+      const today = new Date();
+      const upcoming = vacData.vaccines
+        .filter((v: any) => !v.completed && new Date(v.due_date) >= today)
+        .sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+      if (upcoming.length > 0) setNextVaccine(upcoming[0]);
     }
     setProfileLoading(false);
   }
@@ -596,6 +614,17 @@ export default function Home() {
           <button onClick={() => signOut()} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}>Sign out</button>
         </div>
       </div>
+      
+      {/* Child Snapshot bar */}
+      {profileSaved && (
+        <ChildSnapshot
+          name={profile.name}
+          dob={profile.dob}
+          memories={memories}
+          nextVaccine={nextVaccine}
+          getAge={getAge}
+        />
+      )}
 
       {/* Pro gate modal */}
       {showProModal && (
