@@ -198,7 +198,7 @@ export default function Home() {
         </p>
 
         <p style={{ fontSize: 15, color: "#888", lineHeight: 1.7, margin: "0 0 40px", maxWidth: 480, marginLeft: "auto", marginRight: "auto" }}>
-          Personalized parenting guidance that remembers your child's journey - not just today's question.
+          One place for every question, every memory, and every milestone your child will ever have.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
@@ -225,7 +225,7 @@ export default function Home() {
       {/* Social proof */}
       <div style={{ background: "#FFF9F5", padding: "16px 24px", textAlign: "center", borderBottom: "1px solid #F0EDED" }}>
         <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-          From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
+          Built by the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - trusted by thousands of parents worldwide 🇺🇸 🇬🇧 🇵🇭
         </p>
       </div>
 
@@ -253,13 +253,120 @@ export default function Home() {
           It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> - their age, history, allergies, milestones - and answers accordingly.
         </p>
       </div>
+      {/* Meet Emma — How it works */}
+      <style>{`
+        @media (max-width: 640px) {
+          .emma-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+      <div style={{ background: "white", borderTop: "1px solid #F0EDED", padding: "72px 24px" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#E07A5F", letterSpacing: 2, textTransform: "uppercase", margin: "0 0 12px", textAlign: "center" }}>See it in action</p>
+          <h2 style={{ textAlign: "center", fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 800, color: "#2D2D2D", margin: "0 0 12px", lineHeight: 1.2, letterSpacing: -0.5 }}>
+            This is why AskNeer isn't ChatGPT.
+          </h2>
+          <p style={{ textAlign: "center", color: "#888", margin: "0 0 48px", fontSize: 15, lineHeight: 1.6 }}>
+            AskNeer knows your child before you even ask the question.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start" }}>
+
+            {/* Child profile card */}
+            <div style={{ background: "#FFF9F5", border: "1.5px solid #F0EDED", borderRadius: 20, padding: "24px", position: "relative" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+                <div style={{ background: "#E07A5F", borderRadius: "50%", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 18 }}>E</div>
+                <div>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: 16, color: "#2D2D2D" }}>Emma</p>
+                  <p style={{ margin: 0, fontSize: 13, color: "#E07A5F", fontWeight: 600 }}>8 months old</p>
+                </div>
+                <div style={{ marginLeft: "auto", background: "#E07A5F", color: "white", fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "3px 8px" }}>AskNeer knows</div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  { icon: "🌙", label: "Last night's sleep", value: "7 hours" },
+                  { icon: "🍎", label: "Started solids", value: "3 weeks ago" },
+                  { icon: "⚠️", label: "Egg allergy", value: "Recorded" },
+                  { icon: "💉", label: "Last vaccine", value: "2 weeks ago" },
+                  { icon: "📏", label: "Weight", value: "7.8 kg" },
+                  { icon: "💬", label: "Previous chats", value: "12 conversations" },
+                ].map(item => (
+                  <div key={item.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "white", borderRadius: 10, border: "1px solid #F0EDED" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 15 }}>{item.icon}</span>
+                      <span style={{ fontSize: 13, color: "#666" }}>{item.label}</span>
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#2D2D2D" }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Chat demo */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+              {/* Chat label */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <div style={{ height: 1, flex: 1, background: "#F0EDED" }} />
+                <span style={{ fontSize: 12, color: "#aaa", fontWeight: 500 }}>Parent asks</span>
+                <div style={{ height: 1, flex: 1, background: "#F0EDED" }} />
+              </div>
+
+              {/* Parent message */}
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ background: "#E07A5F", color: "white", padding: "12px 16px", borderRadius: "18px 18px 4px 18px", maxWidth: "80%", fontSize: 14, lineHeight: 1.6, boxShadow: "0 2px 8px rgba(224,122,95,0.2)" }}>
+                  Is it okay that Emma skipped breakfast today?
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ height: 1, flex: 1, background: "#F0EDED" }} />
+                <span style={{ fontSize: 12, color: "#aaa", fontWeight: 500 }}>AskNeer responds</span>
+                <div style={{ height: 1, flex: 1, background: "#F0EDED" }} />
+              </div>
+
+              {/* AskNeer response */}
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                <div style={{ background: "#E07A5F", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 13, flexShrink: 0 }}>E</div>
+                <div style={{ background: "white", border: "1px solid #F0EDED", padding: "14px 16px", borderRadius: "4px 18px 18px 18px", fontSize: 14, lineHeight: 1.7, color: "#2D2D2D", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+                  Since Emma only started solids <strong>3 weeks ago</strong>, skipping a meal is completely normal at this stage — her tummy is still adjusting. Given her <strong>recorded egg allergy</strong>, I'd also suggest watching any new foods you introduce this week. At 8 months, breast milk or formula still provides most of her nutrition, so don't worry too much about one missed breakfast.
+                  <div style={{ marginTop: 10, padding: "8px 12px", background: "#FFF9F5", borderRadius: 8, fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>
+                    💡 Based on Emma's profile — not a generic answer
+                  </div>
+                </div>
+              </div>
+
+              {/* VS ChatGPT */}
+              <div style={{ marginTop: 8, padding: "14px 16px", background: "#F9F9F9", border: "1px solid #EEEEEE", borderRadius: 12 }}>
+                <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: "#999", textTransform: "uppercase", letterSpacing: 1 }}>ChatGPT would say:</p>
+                <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.5, fontStyle: "italic" }}>
+                  "It's generally normal for babies to occasionally skip meals. Make sure they're getting enough nutrients throughout the day..."
+                </p>
+                <p style={{ margin: "8px 0 0", fontSize: 11, color: "#ccc" }}>Generic. Doesn't know Emma. Doesn't know about the egg allergy.</p>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Bottom CTA */}
+          <div style={{ textAlign: "center", marginTop: 48 }}>
+            <p style={{ color: "#888", fontSize: 15, margin: "0 0 16px" }}>
+              AskNeer builds Emma's profile from your conversations — automatically.
+            </p>
+            <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 16px rgba(224,122,95,0.3)" }}>
+              Start building your child's profile →
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Features */}
       <div style={{ background: "white", borderTop: "1px solid #F0EDED", padding: "72px 24px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#E07A5F", letterSpacing: 2, textTransform: "uppercase", margin: "0 0 12px", textAlign: "center" }}>What makes AskNeer different</p>
           <h2 style={{ textAlign: "center", fontSize: "clamp(24px, 4vw, 34px)", fontWeight: 800, color: "#2D2D2D", margin: "0 0 48px", letterSpacing: -0.5 }}>
-            Not a chatbot. A parenting companion<br />that knows your child.
+            Not another AI chatbot. A personalized parenting companion that grows with your child.
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
             {[
@@ -310,7 +417,7 @@ export default function Home() {
               <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 700, color: "#2D2D2D" }}>{f.title}</h3>
               <p style={{ margin: "0 0 16px", fontSize: 13, color: "#888", lineHeight: 1.5 }}>{f.desc}</p>
               <button onClick={() => signIn("google")} style={{ width: "100%", padding: "9px", background: "#FFF0E8", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, color: "#E07A5F", cursor: "pointer" }}>
-                Join Waitlist
+                Get Early Access
               </button>
             </div>
           ))}
