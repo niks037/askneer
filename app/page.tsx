@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import VaccineTracker from "@/components/VaccineTracker";
 import ChildSnapshot from "@/components/ChildSnapshot";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -187,6 +188,7 @@ export default function Home() {
   // ─── Login screen ───────────────────────────────────────────────
   if (!session) return (
     <div style={{ minHeight: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
+      <InstallPrompt />
 
       {/* Nav */}
       <div style={{ background: "white", borderBottom: "1px solid #F0EDED", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 10 }}>
@@ -529,6 +531,7 @@ export default function Home() {
   // ─── Profile setup screen ────────────────────────────────────────
   if (!profileSaved) return (
     <div style={{ minHeight: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
+      <InstallPrompt />
       <div style={{ background: "white", padding: "16px 24px", borderBottom: "1px solid #F0F0F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ background: "#E07A5F", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 15 }}>N</div>
@@ -569,6 +572,7 @@ export default function Home() {
   // ─── Main chat screen ────────────────────────────────────────────
   return (
     <div style={{ height: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <InstallPrompt />
 
       {/* Header */}
       <div style={{ background: "white", padding: "12px 20px", borderBottom: "1px solid #F0F0F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>

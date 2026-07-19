@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Providers from "./providers";
-import InstallPrompt from "@/components/InstallPrompt";
 
 export const metadata: Metadata = {
   title: 'AskNeer - AI Parenting Companion',
@@ -33,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>{children}</Providers>
-        <InstallPrompt />
       </body>
     </html>
   );
