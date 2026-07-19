@@ -19,8 +19,9 @@ export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge
   })
 
   const allergies = uniqueMemories.filter(m =>
-    m.toLowerCase().includes('allerg') ||
-    m.toLowerCase().includes('intoleran')
+    (m.toLowerCase().includes('allerg') || m.toLowerCase().includes('intoleran')) &&
+    !m.toLowerCase().includes('not allerg') &&
+    !m.toLowerCase().includes('no allerg')
   )
 
   const activities = uniqueMemories.filter(m =>

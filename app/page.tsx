@@ -185,11 +185,13 @@ export default function Home() {
     setChatLoading(false);
 
     // Refresh memories after extraction completes in background
-    setTimeout(async () => {
-      const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
-      const memData = await memRes.json();
-      if (memData.memories) setMemories(memData.memories);
-    }, 8000);
+    [8000, 16000].forEach(delay => {
+      setTimeout(async () => {
+        const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
+        const memData = await memRes.json();
+        if (memData.memories) setMemories(memData.memories);
+      }, delay);
+    });
   }
 
   // ─── Login screen ───────────────────────────────────────────────
@@ -622,6 +624,14 @@ export default function Home() {
           >
             + New Child <span style={{ fontSize: 11, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
           </button>
+          {isPro && (
+            <button
+              onClick={() => window.open("https://askneer.lemonsqueezy.com/billing", "_blank")}
+              style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}
+            >
+              Manage Plan
+            </button>
+          )}
           <button onClick={() => signOut()} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}>Sign out</button>
         </div>
       </div>
