@@ -183,6 +183,13 @@ export default function Home() {
     const data = await res.json();
     setMessages([...updatedMessages, { role: "assistant", content: data.reply }]);
     setChatLoading(false);
+
+    // Refresh memories after extraction completes in background
+    setTimeout(async () => {
+      const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
+      const memData = await memRes.json();
+      if (memData.memories) setMemories(memData.memories);
+    }, 8000);
   }
 
   // ─── Login screen ───────────────────────────────────────────────
