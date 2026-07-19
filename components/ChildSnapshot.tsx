@@ -53,9 +53,9 @@ export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge
   }
 
   const items = [
-    ...allergies.map(a => ({ icon: '⚠️', text: shorten(a) })),
-    ...activities.map(a => ({ icon: '🏃', text: shorten(a) })),
-    ...health.map(h => ({ icon: '❤️', text: shorten(h) })),
+    ...allergies.map(a => ({ icon: '⚠️', text: a })),
+    ...activities.map(a => ({ icon: '🏃', text: a })),
+    ...health.map(h => ({ icon: '❤️', text: h })),
     nextVaccine ? { icon: '💉', text: `Next vaccine: ${fmt(nextVaccine.due_date)}` } : null,
   ].filter(Boolean) as { icon: string; text: string }[]
 
