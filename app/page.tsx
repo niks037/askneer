@@ -198,8 +198,8 @@ export default function Home() {
   if (!session) return (
   <div style={{ minHeight: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
 
-    {/* Mobile-first hero — single screen, no scrolling */}
-    <div style={{ minHeight: "100vh", height: "100vh", display: "flex", flexDirection: "column", padding: "24px 24px 32px" }}>
+    {/* Mobile-first hero - single screen, no scrolling */}
+    <div style={{ minHeight: "100vh", height: "100vh", display: "flex", flexDirection: "column", padding: "16px 24px 16px" }}>
 
       {/* Nav */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 40 }}>
@@ -210,8 +210,8 @@ export default function Home() {
         <span style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600, background: "#FFF0E8", padding: "4px 12px", borderRadius: 99 }}>By NeernMom</span>
       </div>
 
-      {/* Hero content — vertically centered */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+      {/* Hero content - vertically centered */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", paddingTop: 0 }}>
 
         {/* Icon */}
         <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
@@ -245,7 +245,7 @@ export default function Home() {
         {/* Trust stats */}
         <div style={{ display: "flex", gap: 20, marginTop: 32, justifyContent: "center" }}>
           {[
-            { number: "103K", label: "NeernMom parents" },
+            { number: "110K", label: "NeernMom parents" },
             { number: "Free", label: "to get started" },
             { number: "24/7", label: "always there" },
           ].map(s => (
@@ -257,8 +257,21 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Learn more link */}
-      <div style={{ textAlign: "center", borderTop: "0.5px solid #F0EDED", paddingTop: 16, marginTop: 24 }}>
+     {/* Trust stats */}
+      <div style={{ display: "flex", gap: 20, marginTop: 32, justifyContent: "center" }}>
+          {[
+            { number: "103K", label: "NeernMom parents" },
+            { number: "Free", label: "to get started" },
+            { number: "24/7", label: "always there" },
+          ].map(s => (
+            <div key={s.label} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#2D2D2D" }}>{s.number}</div>
+              <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* See how it works - directly under stats */}
         <button onClick={() => {
           const fp = document.getElementById('full-page');
           if (fp) {
@@ -266,10 +279,9 @@ export default function Home() {
             setTimeout(() => fp.scrollIntoView({ behavior: 'smooth' }), 50);
           }
         }}
-          style={{ background: "none", border: "none", color: "#E07A5F", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>
-          See how it works
-        </button>
-      </div>
+          style={{ marginTop: 16, background: "none", border: "none", color: "#E07A5F", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>
+          See how it works ↓
+        </button>  
     </div>
 
     {/* Full page for desktop and curious users */}
@@ -278,7 +290,7 @@ export default function Home() {
       {/* Social proof */}
       <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
         <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-          From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> — science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
+          From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
         </p>
       </div>
 
@@ -303,7 +315,7 @@ export default function Home() {
         </div>
         <p style={{ marginTop: 32, fontSize: 16, color: "#555", lineHeight: 1.7 }}>
           AskNeer doesn't give you generic answers.<br />
-          It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> — their age, history, allergies, milestones — and answers accordingly.
+          It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> - their age, history, allergies, milestones - and answers accordingly.
         </p>
       </div>
 
@@ -350,7 +362,7 @@ export default function Home() {
                 <div style={{ background: "white", border: "1px solid #F0EDED", padding: "14px 16px", borderRadius: "4px 18px 18px 18px", fontSize: 14, lineHeight: 1.7, color: "#2D2D2D" }}>
                   Since Emma only started solids <strong>3 weeks ago</strong>, skipping a meal is completely normal. Given her <strong>recorded egg allergy</strong>, watch any new foods this week.
                   <div style={{ marginTop: 10, padding: "8px 12px", background: "#FFF9F5", borderRadius: 8, fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>
-                    Based on Emma's profile — not a generic answer
+                    Based on Emma's profile - not a generic answer
                   </div>
                 </div>
               </div>
@@ -378,12 +390,12 @@ export default function Home() {
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
           {[
-            { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about allergies, milestones, or daycare once — it remembers forever.", pro: false },
+            { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about allergies, milestones, or daycare once - it remembers forever.", pro: false },
             { emoji: "💉", title: "Vaccine tracker", desc: "Automatically calculates your child's complete vaccine schedule. Never miss a due date.", pro: true },
-            { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now — AskNeer is always there.", pro: false },
+            { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now - AskNeer is always there.", pro: false },
             { emoji: "🎯", title: "Knows their exact age", desc: "Every response is calibrated to your child's age in months and years.", pro: false },
             { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it.", pro: false },
-            { emoji: "📖", title: "Growing platform", desc: "Sleep tracking, growth charts, milestones, and a lifetime storybook — all coming soon.", pro: false },
+            { emoji: "📖", title: "Growing platform", desc: "Sleep tracking, growth charts, milestones, and a lifetime storybook - all coming soon.", pro: false },
           ].map(f => (
             <div key={f.title} style={{ background: "#FFF9F5", borderRadius: 16, padding: "24px 22px", border: "1px solid #F0EDED", position: "relative" }}>
               {f.pro && <span style={{ position: "absolute", top: 16, right: 16, fontSize: 10, fontWeight: 700, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "2px 7px" }}>PRO</span>}
@@ -434,7 +446,7 @@ export default function Home() {
           </h2>
           <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 16, lineHeight: 1.75, margin: "0 0 28px" }}>
             Every photo. Every first word. Every milestone.<br />
-            Years later, export <em>The Story of Emma — 0 to 18 years.</em>
+            Years later, export <em>The Story of Emma - 0 to 18 years.</em>
           </p>
           <button onClick={() => signIn("google")} style={{ background: "white", color: "#E07A5F", border: "none", borderRadius: 14, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
             Start your child's story →
@@ -492,7 +504,7 @@ export default function Home() {
         <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "18px 40px", fontSize: 17, fontWeight: 700, cursor: "pointer" }}
           onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
           onMouseOut={e => (e.currentTarget.style.background = "#E07A5F")}>
-          Start Free — No Card Required
+          Start Free - No Card Required
         </button>
       </div>
 
