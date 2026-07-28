@@ -199,7 +199,7 @@ export default function Home() {
   <div style={{ minHeight: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
 
     {/* Mobile-first hero — single screen, no scrolling */}
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: "24px 24px 32px" }}>
+    <div style={{ minHeight: "100vh", height: "100vh", display: "flex", flexDirection: "column", padding: "24px 24px 32px" }}>
 
       {/* Nav */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 40 }}>
