@@ -257,20 +257,6 @@ export default function Home() {
         </div>
       </div>
 
-     {/* Trust stats */}
-      <div style={{ display: "flex", gap: 20, marginTop: 32, justifyContent: "center" }}>
-          {[
-            { number: "103K", label: "NeernMom parents" },
-            { number: "Free", label: "to get started" },
-            { number: "24/7", label: "always there" },
-          ].map(s => (
-            <div key={s.label} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#2D2D2D" }}>{s.number}</div>
-              <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-
         {/* See how it works - directly under stats */}
         <button onClick={() => {
           const fp = document.getElementById('full-page');
