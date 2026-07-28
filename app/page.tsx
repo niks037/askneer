@@ -259,7 +259,13 @@ export default function Home() {
 
       {/* Learn more link */}
       <div style={{ textAlign: "center", borderTop: "0.5px solid #F0EDED", paddingTop: 16, marginTop: 24 }}>
-        <button onClick={() => document.getElementById('full-page')?.scrollIntoView({ behavior: 'smooth' })}
+        <button onClick={() => {
+          const fp = document.getElementById('full-page');
+          if (fp) {
+            fp.style.display = 'block';
+            setTimeout(() => fp.scrollIntoView({ behavior: 'smooth' }), 50);
+          }
+        }}
           style={{ background: "none", border: "none", color: "#E07A5F", fontSize: 13, cursor: "pointer", textDecoration: "underline" }}>
           See how it works
         </button>
@@ -267,7 +273,7 @@ export default function Home() {
     </div>
 
     {/* Full page for desktop and curious users */}
-    <div id="full-page">
+    <div id="full-page" style={{ display: "none" }}>
 
       {/* Social proof */}
       <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
