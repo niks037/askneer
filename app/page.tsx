@@ -247,7 +247,7 @@ export default function Home() {
             <p style={{ color: "#bbb", fontSize: 12, textAlign: "center", marginTop: 8 }}>No credit card required · 3 free questions daily</p>
           </div>
 
-          {/* Stats + See how it works — together */}
+          {/* Stats + See how it works - together */}
           <div style={{ marginTop: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
             <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
               {[
@@ -277,13 +277,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Full page — hidden by default */}
+      {/* Full page - hidden by default */}
       <div id="full-page" style={{ display: "none" }}>
 
         {/* Social proof */}
         <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
           <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-            From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> — science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
+            From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
           </p>
         </div>
 
@@ -307,7 +307,7 @@ export default function Home() {
             ))}
           </div>
           <p style={{ marginTop: 28, fontSize: 15, color: "#555", lineHeight: 1.7 }}>
-            AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> — their age, history, allergies, milestones.
+            AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> - their age, history, allergies, milestones.
           </p>
         </div>
 
@@ -354,7 +354,7 @@ export default function Home() {
                   <div style={{ background: "white", border: "1px solid #F0EDED", padding: "12px 14px", borderRadius: "4px 18px 18px 18px", fontSize: 14, lineHeight: 1.7, color: "#2D2D2D" }}>
                     Since Emma only started solids <strong>3 weeks ago</strong>, skipping a meal is completely normal. Given her <strong>recorded egg allergy</strong>, watch any new foods this week.
                     <div style={{ marginTop: 8, padding: "6px 10px", background: "#FFF9F5", borderRadius: 8, fontSize: 11, color: "#E07A5F", fontWeight: 600 }}>
-                      Based on Emma's profile — not a generic answer
+                      Based on Emma's profile - not a generic answer
                     </div>
                   </div>
                 </div>
@@ -380,12 +380,12 @@ export default function Home() {
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
             {[
-              { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about allergies or milestones once — it remembers forever.", pro: false },
+              { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about allergies or milestones once - it remembers forever.", pro: false },
               { emoji: "💉", title: "Vaccine tracker", desc: "Auto-calculates your child's complete vaccine schedule from date of birth.", pro: true },
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
               { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it.", pro: false },
-              { emoji: "📖", title: "Growing platform", desc: "Sleep, growth, milestones, and a lifetime storybook — all coming soon.", pro: false },
+              { emoji: "📖", title: "Growing platform", desc: "Sleep, growth, milestones, and a lifetime storybook - all coming soon.", pro: false },
             ].map(f => (
               <div key={f.title} style={{ background: "#FFF9F5", borderRadius: 16, padding: "20px", border: "1px solid #F0EDED", position: "relative" }}>
                 {f.pro && <span style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "2px 7px" }}>PRO</span>}
@@ -436,7 +436,7 @@ export default function Home() {
             </h2>
             <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, lineHeight: 1.75, margin: "0 0 24px" }}>
               Every photo. Every first word. Every milestone.<br />
-              Export <em>The Story of Emma — 0 to 18 years.</em>
+              Export <em>The Story of Emma - 0 to 18 years.</em>
             </p>
             <button onClick={() => signIn("google")} style={{ background: "white", color: "#E07A5F", border: "none", borderRadius: 12, padding: "13px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
               Start your child's story →
@@ -494,7 +494,7 @@ export default function Home() {
           <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 14, padding: "16px 36px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}
             onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
             onMouseOut={e => (e.currentTarget.style.background = "#E07A5F")}>
-            Start Free — No Card Required
+            Start Free - No Card Required
           </button>
         </div>
 

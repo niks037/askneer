@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
       {[
         {
           title: "1. Who we are",
-          content: `AskNeer (askneer.com) is an AI-powered parenting companion app operated by Rajwinder Kaur, an individual based in India. AskNeer is powered by NeernMom, a parenting content brand. You can contact us at info@askneer.com.`
+          content: `AskNeer (askneer.com) is an AI-powered parenting companion app operated by Rajwinder, an individual based in India. AskNeer is powered by NeernMom, a parenting content brand. You can contact us at info@askneer.com.`
         },
         {
           title: "2. What information we collect",
@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
 - Chat messages and conversations you have with AskNeer
 - Facts and memories extracted from your conversations (such as allergies, milestones, and activities)
 - Vaccination tracking data you enter
-- Payment information (processed securely by Dodo Payments — we never see your card details)
+- Payment information (processed securely by Dodo Payments - we never see your card details)
 - Device information and usage data for app performance`
         },
         {
@@ -59,11 +59,11 @@ You can request deletion of all child data at any time by emailing info@askneer.
           content: `Your data is stored securely in Supabase (a cloud database provider). Chat messages and memories are encrypted in transit using HTTPS. We retain your data for as long as your account is active. If you delete your account, we will delete your data within 30 days.
 
 AskNeer uses the following third-party services to operate:
-- Anthropic Claude API — to generate AI responses (your messages are processed by Anthropic's API)
-- Supabase — for secure data storage
-- Dodo Payments — for payment processing
-- Vercel — for app hosting
-- Google OAuth — for sign-in`
+- Anthropic Claude API
+- Supabase - for secure data storage
+- Dodo Payments - for payment processing
+- Vercel - for app hosting
+- Google OAuth - for sign-in`
         },
         {
           title: "6. Your rights",
@@ -87,7 +87,7 @@ To exercise any of these rights, email us at info@askneer.com. We will respond w
         },
         {
           title: "9. AI and automated processing",
-          content: `AskNeer uses artificial intelligence (Claude by Anthropic) to generate responses to your questions. Your chat messages are sent to Anthropic's API to generate responses. Anthropic's privacy policy applies to this processing. AskNeer's AI responses are generated automatically and are for general informational purposes only — they are not a substitute for professional medical, legal, or psychological advice.`
+          content: `AskNeer uses artificial intelligence to generate responses to your questions. Anthropic's privacy policy applies to this processing. AskNeer's AI responses are generated automatically and are for general informational purposes only - they are not a substitute for professional medical, legal, or psychological advice.`
         },
         {
           title: "10. Changes to this policy",
@@ -112,7 +112,7 @@ Website: www.askneer.com`
           © 2026 AskNeer · Powered by NeernMom ·{" "}
             <a href="/privacy" style={{ color: "#E07A5F", textDecoration: "none" }}>Privacy Policy</a>
             {" "}·{" "}
-            <span style={{ color: "#E07A5F" }}>Not a medical service</span>
+            <span style={{ color: "#E07A5F" }}>Not a medical service | </span>
             <a href="/terms" style={{ color: "#E07A5F" }}>Terms of Service</a>
         </p>
       </div>
