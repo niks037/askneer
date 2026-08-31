@@ -637,12 +637,11 @@ if (!res.ok) throw new Error("API error");
             )}
           </div>
           <div
-            onClick={() => children.length > 1 && setShowChildPicker(true)}
-            style={{ cursor: children.length > 1 ? "pointer" : "default" }}
+            onClick={() => {}}
+            style={{ cursor: "default" }}
           >
             <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D", display: "flex", alignItems: "center", gap: 4 }}>
               {profile.name}
-              {children.length > 1 && <span style={{ fontSize: 10, color: "#aaa" }}>▼</span>}
             </div>
             <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>{getAge(profile.dob)}</div>
           </div>
