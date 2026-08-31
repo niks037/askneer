@@ -91,12 +91,10 @@ export default function Home() {
     if (chatData.messages?.length > 0) {
       setMessages(chatData.messages);
     }
-    // Fetch memories for snapshot
-    const memRes = await fetch(`/api/memories?email=${session.user.email}`);
+    const memRes = await fetch(`/api/memories?email=${session.user.email}&child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
     const memData = await memRes.json();
     if (memData.memories) setMemories(memData.memories);
 
-    // Fetch next upcoming vaccine
     const vacRes = await fetch(`/api/vaccines?email=${encodeURIComponent(session.user.email)}&child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
     const vacData = await vacRes.json();
     if (vacData.vaccines) {
@@ -128,24 +126,14 @@ export default function Home() {
     await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: session?.user?.email,
-        child_id: child.child_id
-      })
+      body: JSON.stringify({ email: session?.user?.email, child_id: child.child_id })
     });
-    setProfile({
-      name: child.child_name,
-      dob: child.child_dob,
-      notes: child.child_notes || "",
-      child_id: child.child_id
-    });
+    setProfile({ name: child.child_name, dob: child.child_dob, notes: child.child_notes || "", child_id: child.child_id });
     setMessages([]);
     setShowChildPicker(false);
     const chatRes = await fetch(`/api/messages?email=${session?.user?.email}`);
     const chatData = await chatRes.json();
-    if (chatData.messages?.length > 0) {
-      setMessages(chatData.messages);
-    }
+    if (chatData.messages?.length > 0) setMessages(chatData.messages);
   }
 
   function saveProfile() {
@@ -183,8 +171,6 @@ export default function Home() {
     const data = await res.json();
     setMessages([...updatedMessages, { role: "assistant", content: data.reply }]);
     setChatLoading(false);
-
-    // Refresh memories after extraction completes in background
     [8000, 16000].forEach(delay => {
       setTimeout(async () => {
         const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
@@ -198,7 +184,7 @@ export default function Home() {
   if (!session) return (
     <div style={{ background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
 
-      {/* Single screen hero */}
+      {/* Single screen hero - exactly one viewport height */}
       <div style={{ height: "100vh", display: "flex", flexDirection: "column", padding: "16px 24px" }}>
 
         {/* Nav */}
@@ -213,14 +199,12 @@ export default function Home() {
         {/* Centered content */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
 
-          {/* Icon */}
           <div style={{ width: 60, height: 60, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
           </div>
 
-          {/* Headline */}
           <h1 style={{ fontSize: "clamp(28px, 7vw, 52px)", fontWeight: 800, color: "#2D2D2D", margin: "0 0 14px", lineHeight: 1.15, letterSpacing: -1 }}>
             Every question.<br />
             Every milestone.<br />
@@ -231,7 +215,6 @@ export default function Home() {
             The AI that grows with your child and actually remembers them.
           </p>
 
-          {/* CTA */}
           <div style={{ width: "100%", maxWidth: 380 }}>
             <button onClick={() => signIn("google")} style={{ width: "100%", padding: "16px 24px", background: "#E07A5F", color: "white", border: "none", borderRadius: 16, fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}
               onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
@@ -247,7 +230,6 @@ export default function Home() {
             <p style={{ color: "#bbb", fontSize: 12, textAlign: "center", marginTop: 8 }}>No credit card required · 3 free questions daily</p>
           </div>
 
-          {/* Stats + See how it works - together */}
           <div style={{ marginTop: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
             <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
               {[
@@ -270,20 +252,19 @@ export default function Home() {
                 }
               }}
               style={{ background: "none", border: "none", color: "#E07A5F", fontSize: 13, cursor: "pointer", textDecoration: "underline", padding: 0 }}>
-              See how it works ↓
+              See how it works
             </button>
           </div>
-
         </div>
       </div>
 
-      {/* Full page - hidden by default */}
+      {/* Full page - hidden by default, shown when See how it works is clicked */}
       <div id="full-page" style={{ display: "none" }}>
 
         {/* Social proof */}
         <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
           <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-            From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
+            From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> — science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
           </p>
         </div>
 
@@ -307,7 +288,7 @@ export default function Home() {
             ))}
           </div>
           <p style={{ marginTop: 28, fontSize: 15, color: "#555", lineHeight: 1.7 }}>
-            AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> - their age, history, allergies, milestones.
+            AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> — their age, history, allergies, milestones.
           </p>
         </div>
 
@@ -367,7 +348,7 @@ export default function Home() {
             </div>
             <div style={{ textAlign: "center", marginTop: 40 }}>
               <button onClick={() => signIn("google")} style={{ background: "#E07A5F", color: "white", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                Start building your child's profile →
+                Start building your child's profile
               </button>
             </div>
           </div>
@@ -411,7 +392,7 @@ export default function Home() {
                 { emoji: "🌙", title: "Sleep Tracker", desc: "Understand patterns, not just hours." },
                 { emoji: "🍼", title: "Feeding Journal", desc: "Never lose track of meals or first foods." },
                 { emoji: "📈", title: "Growth & Milestones", desc: "See how your child develops over time." },
-              ].map(f => (
+              ].map((f: any) => (
                 <div key={f.title} style={{ background: "white", borderRadius: 14, padding: "20px", border: f.hot ? "1.5px solid #E07A5F" : "1px solid #F0EDED", position: "relative" }}>
                   {f.hot && <span style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: "#E07A5F", color: "white", fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 10px", whiteSpace: "nowrap" }}>MOST REQUESTED</span>}
                   <div style={{ fontSize: 24, marginBottom: 8 }}>{f.emoji}</div>
@@ -436,10 +417,10 @@ export default function Home() {
             </h2>
             <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, lineHeight: 1.75, margin: "0 0 24px" }}>
               Every photo. Every first word. Every milestone.<br />
-              Export <em>The Story of Emma - 0 to 18 years.</em>
+              Export The Story of Emma - 0 to 18 years.
             </p>
             <button onClick={() => signIn("google")} style={{ background: "white", color: "#E07A5F", border: "none", borderRadius: 12, padding: "13px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-              Start your child's story →
+              Start your child's story
             </button>
           </div>
         </div>
@@ -501,9 +482,11 @@ export default function Home() {
         {/* Footer */}
         <div style={{ borderTop: "1px solid #F0EDED", padding: "18px 24px", textAlign: "center" }}>
           <p style={{ margin: 0, color: "#ccc", fontSize: 12 }}>
-            © 2026 AskNeer · Powered by NeernMom ·{" "}
+            © 2026 AskNeer · Powered by NeernMom {" · "}
             <a href="/privacy" style={{ color: "#E07A5F", textDecoration: "none" }}>Privacy Policy</a>
-            {" "}·{" "}
+            {" · "}
+            <a href="/terms" style={{ color: "#E07A5F", textDecoration: "none" }}>Terms</a>
+            {" · "}
             <span style={{ color: "#E07A5F" }}>Not a medical service</span>
           </p>
         </div>
@@ -529,7 +512,7 @@ export default function Home() {
           <p style={{ color: "#888", margin: "0 0 24px", fontSize: 14 }}>Hi {session.user?.name?.split(" ")[0]}! I'll personalize everything for your little one.</p>
           <label style={{ display: "block", marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Child's name</span>
-            <input value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} placeholder="e.g. Emma" style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+            <input value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} placeholder="e.g. Emma, Lucas, Sofia" style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
@@ -546,7 +529,7 @@ export default function Home() {
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
           <button onClick={saveProfile} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-            Start Chatting →
+            Start Chatting
           </button>
         </div>
       </div>
@@ -561,8 +544,6 @@ export default function Home() {
       {/* Header */}
       <div style={{ background: "white", padding: "12px 20px", borderBottom: "1px solid #F0F0F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-
-          {/* Avatar - hover shows edit icon, click opens edit panel */}
           <div
             onMouseEnter={() => setAvatarHovered(true)}
             onMouseLeave={() => setAvatarHovered(false)}
@@ -578,8 +559,6 @@ export default function Home() {
               profile.name?.[0]?.toUpperCase() || "N"
             )}
           </div>
-
-          {/* Child name - tap to switch if multiple children */}
           <div
             onClick={() => children.length > 1 && setShowChildPicker(true)}
             style={{ cursor: children.length > 1 ? "pointer" : "default" }}
@@ -610,7 +589,7 @@ export default function Home() {
           <button onClick={() => signOut()} style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}>Sign out</button>
         </div>
       </div>
-      
+
       {/* Child Snapshot bar */}
       {profileSaved && (
         <ChildSnapshot
@@ -661,7 +640,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Edit Profile Panel - correctly outside Pro modal */}
+      {/* Edit Profile Panel */}
       {showEditProfile && (
         <div onClick={() => setShowEditProfile(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
           <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
@@ -706,7 +685,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Child Picker - correctly outside Pro modal */}
+      {/* Child Picker */}
       {showChildPicker && (
         <div onClick={() => setShowChildPicker(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 3000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
           <div onClick={e => e.stopPropagation()} style={{ background: "#FFF9F5", borderRadius: "20px 20px 0 0", padding: "24px 24px 36px", width: "100%", maxWidth: 480 }}>
