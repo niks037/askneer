@@ -90,10 +90,10 @@ export default function InstallPrompt() {
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 1000,
-        animation: 'slideUp 0.3s ease forwards, pulse 1.5s ease-in-out 2.5s infinite',
-        background: 'transparent',
-        lineHeight: 0,
-        borderRadius: '24px',
+        animation: 'slideUp 0.3s ease forwards',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
       }}>
         <button
           onClick={handleInstallClick}
@@ -110,6 +110,7 @@ export default function InstallPrompt() {
             alignItems: 'center',
             gap: '8px',
             whiteSpace: 'nowrap',
+            boxShadow: '0 4px 16px rgba(224,122,95,0.5)',
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -118,6 +119,25 @@ export default function InstallPrompt() {
             <path d="M3 18v2a1 1 0 001 1h16a1 1 0 001-1v-2"/>
           </svg>
           Add AskNeer to Home Screen
+        </button>
+        <button
+          onClick={() => setShowButton(false)}
+          style={{
+            background: 'rgba(0,0,0,0.35)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '28px',
+            height: '28px',
+            cursor: 'pointer',
+            fontSize: '13px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          ✕
         </button>
       </div>
 

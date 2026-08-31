@@ -233,7 +233,7 @@ export default function Home() {
           <div style={{ marginTop: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
             <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
               {[
-                { number: "103K", label: "NeernMom parents" },
+                { number: "120K", label: "NeernMom parents" },
                 { number: "Free", label: "to get started" },
                 { number: "24/7", label: "always there" },
               ].map(s => (
