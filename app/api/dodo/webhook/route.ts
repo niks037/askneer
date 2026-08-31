@@ -41,7 +41,8 @@ export async function POST(req: Request) {
 
   try {
     if (
-      eventType === "subscription.active"
+      eventType === "subscription.active" ||
+      eventType === "payment.succeeded"
     ) {
       // Upgrade to Pro
       await supabase
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
         .update({
           is_pro: true,
           subscription_id: data?.subscription_id || data?.id,
-          customer_id: data?.customer?.customer_id,
+          customer_id: data?.customer?.customer_id || data?.customer?.customer_id,
           trial_ends_at: data?.trial_period_end || null,
         })
         .eq("email", email);
