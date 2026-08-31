@@ -27,6 +27,8 @@ export default function Home() {
   const [nextVaccine, setNextVaccine] = useState<{name: string, due_date: string} | null>(null);
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
+  const [profileError, setProfileError] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -156,10 +158,14 @@ export default function Home() {
   }
 
   function saveProfile() {
-    if (!profile.name || !profile.dob) return alert("Please enter child's name and date of birth");
-    saveProfileToDB(profile);
-    setProfileSaved(true);
+  if (!profile.name || !profile.dob) {
+    setProfileError("Please enter your child's name and date of birth.");
+    return;
   }
+  setProfileError("");
+  saveProfileToDB(profile);
+  setProfileSaved(true);
+}
 
   async function ask() {
     if (!input.trim()) return;
@@ -547,6 +553,11 @@ export default function Home() {
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
+          {profileError && (
+            <div style={{ background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13, color: "#993C1D" }}>
+              {profileError}
+            </div>
+          )}
           <button onClick={saveProfile} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
             Start Chatting
           </button>
@@ -647,6 +658,7 @@ export default function Home() {
               {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child."}
             </p>
             <button onClick={async () => {
+              setCheckoutError("");
               const res = await fetch("/api/dodo/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -656,7 +668,7 @@ export default function Home() {
               if (data.url) {
                 window.location.href = data.url;
               } else {
-                alert("Something went wrong. Please try again.");
+                setCheckoutError("Something went wrong. Please try again.");
               }
             }} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
               Upgrade to Pro - $4.99/mo
