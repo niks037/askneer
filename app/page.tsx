@@ -188,14 +188,24 @@ export default function Home() {
     setMessages(updatedMessages);
     setInput("");
     setChatLoading(true);
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input, profile: { ...profile, age: getAge(profile.dob) }, history: updatedMessages, email: session?.user?.email })
-    });
-    const data = await res.json();
-    setMessages([...updatedMessages, { role: "assistant", content: data.reply }]);
-    setChatLoading(false);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input, profile: { ...profile, age: getAge(profile.dob) }, history: updatedMessages, email: session?.user?.email })
+      });
+      if (!res.ok) throw new Error("API error");
+      const data = await res.json();
+      if (!data.reply) throw new Error("No reply");
+      setMessages([...updatedMessages, { role: "assistant", content: data.reply }]);
+    } catch (error) {
+      setMessages([...updatedMessages, { 
+        role: "assistant", 
+        content: "Something went wrong — your question wasn't lost. Please try again." 
+      }]);
+    } finally {
+      setChatLoading(false);
+    }
     [8000, 16000].forEach(delay => {
       setTimeout(async () => {
         const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
