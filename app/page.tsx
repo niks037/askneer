@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import VaccineTracker from "@/components/VaccineTracker";
 import ChildSnapshot from "@/components/ChildSnapshot";
 import InstallPrompt from "@/components/InstallPrompt";
+import MemoryView from "@/components/MemoryView";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -30,6 +31,7 @@ export default function Home() {
   const [profileError, setProfileError] = useState("");
   const [checkoutError, setCheckoutError] = useState("");
   const [newMemories, setNewMemories] = useState<string[]>([]);
+  const [showMemoryView, setShowMemoryView] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -156,6 +158,15 @@ export default function Home() {
     const chatRes = await fetch(`/api/messages?email=${session?.user?.email}`);
     const chatData = await chatRes.json();
     if (chatData.messages?.length > 0) setMessages(chatData.messages);
+  }
+
+  async function deleteMemory(memory: string) {
+    await fetch("/api/memories", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: session?.user?.email, child_name: profile.name, memory_text: memory })
+    });
+    setMemories(prev => prev.filter(m => m !== memory));
   }
 
   function saveProfile() {
@@ -662,13 +673,15 @@ if (!res.ok) throw new Error("API error");
 
       {/* Child Snapshot bar */}
       {profileSaved && (
-        <ChildSnapshot
-          name={profile.name}
-          dob={profile.dob}
-          memories={memories}
-          nextVaccine={isPro ? nextVaccine : null}
-          getAge={getAge}
-        />
+        <div onClick={() => setShowMemoryView(true)} style={{ cursor: "pointer" }}>
+          <ChildSnapshot
+            name={profile.name}
+            dob={profile.dob}
+            memories={memories}
+            nextVaccine={isPro ? nextVaccine : null}
+            getAge={getAge}
+          />
+        </div>
       )}
 
       {/* Pro gate modal */}
@@ -948,6 +961,15 @@ if (!res.ok) throw new Error("API error");
           childName={profile.name}
           childDob={profile.dob}
           onClose={() => setShowVaccines(false)}
+        />
+      )}
+      {/* Memory View */}
+      {showMemoryView && (
+        <MemoryView
+          name={profile.name}
+          memories={memories}
+          onClose={() => setShowMemoryView(false)}
+          onDelete={deleteMemory}
         />
       )}
     </div>
