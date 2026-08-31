@@ -518,7 +518,7 @@ export default function Home() {
           </label>
           <label style={{ display: "block", marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Date of birth</span>
-            <input type="date" value={profile.dob} onChange={e => setProfile({...profile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+            <input type="date" value={profile.dob} onChange={e => setProfile({...profile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", background: "white", color: "#2D2D2D", WebkitAppearance: "none" as any }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
@@ -654,7 +654,7 @@ export default function Home() {
             </label>
             <label style={{ display: "block", marginBottom: 14 }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Date of birth</span>
-              <input type="date" value={editProfile.dob} onChange={e => setEditProfile({...editProfile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+              <input type="date" value={editProfile.dob} onChange={e => setEditProfile({...editProfile, dob: e.target.value})} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", background: "white", color: "#2D2D2D", WebkitAppearance: "none" as any }}
                 onFocus={e => e.target.style.borderColor = "#E07A5F"}
                 onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
             </label>
