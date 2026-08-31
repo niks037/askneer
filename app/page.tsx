@@ -580,7 +580,7 @@ export default function Home() {
           </button>
           {isPro && (
             <button
-              onClick={() => window.open("https://askneer.lemonsqueezy.com/billing", "_blank")}
+              onClick={() => window.open("https://app.dodopayments.com/billing", "_blank")}
               style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}
             >
               Manage Plan
