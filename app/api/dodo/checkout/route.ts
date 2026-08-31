@@ -2,7 +2,6 @@ import DodoPayments from "dodopayments";
 
 const dodo = new DodoPayments({
   bearerToken: process.env.DODO_API_KEY,
-  environment: "test_mode",
   baseURL: "https://test.dodopayments.com",
 });
 
