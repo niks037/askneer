@@ -194,7 +194,19 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input, profile: { ...profile, age: getAge(profile.dob) }, history: updatedMessages, email: session?.user?.email })
       });
-      if (!res.ok) throw new Error("API error");
+      if (res.status === 403) {
+  const data = await res.json();
+  if (data.error === "limit_reached") {
+    setProModalReason('questions');
+    setShowProModal(true);
+    setMessages(updatedMessages.slice(0, -1)); // remove the user message
+    setInput(input); // restore input
+    setChatLoading(false);
+    return;
+  }
+  throw new Error("API error");
+}
+if (!res.ok) throw new Error("API error");
       const data = await res.json();
       if (!data.reply) throw new Error("No reply");
       setMessages([...updatedMessages, { role: "assistant", content: data.reply }]);

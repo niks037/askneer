@@ -10,6 +10,35 @@ const supabase = createClient(
 export async function POST(req: Request) {
   const { message, profile, history, email } = await req.json();
 
+  // Check Pro status and enforce daily limit for free users
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("is_pro")
+    .eq("email", email)
+    .eq("is_active", true)
+    .single();
+
+  const isPro = profileData?.is_pro || false;
+
+  if (!isPro) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { count } = await supabase
+      .from("chats")
+      .select("*", { count: "exact", head: true })
+      .eq("email", email)
+      .eq("role", "user")
+      .gte("created_at", today.toISOString());
+
+    if ((count || 0) >= 3) {
+      return Response.json({
+        error: "limit_reached",
+        reply: null
+      }, { status: 403 });
+    }
+  }
+
   // Fetch existing memories for this child only
   const { data: memoriesData } = await supabase
     .from("memories")
@@ -36,7 +65,14 @@ IMPORTANT LENGTH RULES:
 - Maximum 200 words even for complex topics
 - Break longer responses into 2-3 short paragraphs with line breaks
 - Get to the point quickly - parents are busy and often reading one-handed while holding a child
-- End with a short, caring follow-up question only when it genuinely helps`,
+- End with a short, caring follow-up question only when it genuinely helps
+
+MEDICAL SAFETY RULES:
+- Never diagnose symptoms or conditions
+- Never recommend specific medications or dosages
+- For urgent symptoms (high fever, breathing difficulty, severe pain, rash spreading fast, child unresponsive), always say clearly: "This needs medical attention — please contact your pediatrician or emergency services right away."
+- For general health questions, remind parents you provide general guidance only and to consult their doctor for medical decisions
+- When uncertain, always err on the side of recommending professional consultation`,
     messages: history.slice(-20).map((m: { role: string; content: string }) => ({
       role: m.role as "user" | "assistant",
       content: m.content,
