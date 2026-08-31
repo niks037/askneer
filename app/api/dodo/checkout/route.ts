@@ -7,6 +7,9 @@ const dodo = new DodoPayments({
 
 export async function POST(req: Request) {
   const { email, name } = await req.json();
+  // DEBUG - remove after fixing    
+  console.log("API KEY starts with:", process.env.DODO_API_KEY?.substring(0, 10));
+  console.log("BASE URL:", process.env.DODO_PAYMENTS_BASE_URL);
   if (!email) return Response.json({ error: "Email required" }, { status: 400 });
 
   try {
