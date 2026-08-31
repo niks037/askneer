@@ -619,7 +619,7 @@ export default function Home() {
               {proModalReason === 'newchild' && "Upgrade to AskNeer Pro to add more children, each with their own personalized chat, vaccines, and milestones."}
             </p>
             <button onClick={async () => {
-              const res = await fetch("/api/lemon/checkout", {
+              const res = await fetch("/api/dodo/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: session?.user?.email, name: session?.user?.name }),
