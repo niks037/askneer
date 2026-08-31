@@ -501,7 +501,10 @@ export default function Home() {
         {/* Footer */}
         <div style={{ borderTop: "1px solid #F0EDED", padding: "18px 24px", textAlign: "center" }}>
           <p style={{ margin: 0, color: "#ccc", fontSize: 12 }}>
-            © 2026 AskNeer · Powered by NeernMom · <span style={{ color: "#E07A5F" }}>Not a medical service</span>
+            © 2026 AskNeer · Powered by NeernMom ·{" "}
+            <a href="/privacy" style={{ color: "#E07A5F", textDecoration: "none" }}>Privacy Policy</a>
+            {" "}·{" "}
+            <span style={{ color: "#E07A5F" }}>Not a medical service</span>
           </p>
         </div>
 
@@ -526,7 +529,7 @@ export default function Home() {
           <p style={{ color: "#888", margin: "0 0 24px", fontSize: 14 }}>Hi {session.user?.name?.split(" ")[0]}! I'll personalize everything for your little one.</p>
           <label style={{ display: "block", marginBottom: 16 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Child's name</span>
-            <input value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} placeholder="e.g. Aarav" style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+            <input value={profile.name} onChange={e => setProfile({...profile, name: e.target.value})} placeholder="e.g. Emma" style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
@@ -538,7 +541,7 @@ export default function Home() {
           </label>
           <label style={{ display: "block", marginBottom: 24 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Anything I should know? <span style={{ fontWeight: 400, color: "#aaa" }}>(optional)</span></span>
-            <textarea value={profile.notes} onChange={e => setProfile({...profile, notes: e.target.value})} placeholder="e.g. premature birth, allergies, started daycare..." rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
+            <textarea value={profile.notes} onChange={e => setProfile({...profile, notes: e.target.value})} placeholder="e.g. premature birth, peanut allergy, started daycare..." rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
