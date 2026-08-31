@@ -651,8 +651,15 @@ if (!res.ok) throw new Error("API error");
             onClick={() => {}}
             style={{ cursor: "default" }}
           >
-            <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D", display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D", display: "flex", alignItems: "center", gap: 6 }}>
               {profile.name}
+              <button
+                onClick={() => setShowMemoryView(true)}
+                title="What AskNeer remembers"
+                style={{ background: "#F0FFF4", border: "1px solid #9AE6B4", borderRadius: 99, padding: "2px 8px", fontSize: 11, fontWeight: 600, color: "#276749", cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}
+              >
+                🧠 {memories.length}
+              </button>
             </div>
             <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>{getAge(profile.dob)}</div>
           </div>

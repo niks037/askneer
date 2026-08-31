@@ -93,6 +93,9 @@ export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge
           </div>
         ))}
       </div>
+      <div style={{ fontSize: 10, color: "#ddd", paddingRight: 12, flexShrink: 0, alignSelf: "center" }}>
+        Tap to view all
+      </div>
     </div>
   )
 }
