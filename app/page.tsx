@@ -29,6 +29,7 @@ export default function Home() {
   const pollRef = useRef<NodeJS.Timeout | null>(null);
   const [profileError, setProfileError] = useState("");
   const [checkoutError, setCheckoutError] = useState("");
+  const [newMemories, setNewMemories] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -218,11 +219,21 @@ if (!res.ok) throw new Error("API error");
     } finally {
       setChatLoading(false);
     }
+    const previousMemories = new Set(memories);
     [8000, 16000].forEach(delay => {
       setTimeout(async () => {
         const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
         const memData = await memRes.json();
-        if (memData.memories) setMemories(memData.memories);
+        if (memData.memories) {
+          setMemories(memData.memories);
+          // Find newly added memories
+          const added = memData.memories.filter((m: string) => !previousMemories.has(m));
+          if (added.length > 0) {
+            setNewMemories(added);
+            // Auto-hide after 6 seconds
+            setTimeout(() => setNewMemories([]), 6000);
+          }
+        }
       }, delay);
     });
   }
@@ -592,6 +603,12 @@ if (!res.ok) throw new Error("API error");
   return (
     <div style={{ height: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       <InstallPrompt />
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
 
       {/* Pro upgrade success banner */}
       {showUpgradeSuccess && (
@@ -856,6 +873,37 @@ if (!res.ok) throw new Error("API error");
                   </div>
                 </div>
               ))}
+              {/* Memory confirmation toast */}
+              {newMemories.length > 0 && (
+                <div style={{
+                  display: "flex", alignItems: "flex-start", gap: 10,
+                  marginBottom: 12, animation: "fadeIn 0.3s ease"
+                }}>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    background: "#F0FFF4", border: "1px solid #9AE6B4",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 14, flexShrink: 0
+                  }}>🧠</div>
+                  <div style={{
+                    background: "#F0FFF4", border: "1px solid #9AE6B4",
+                    borderRadius: "4px 18px 18px 18px",
+                    padding: "10px 14px", maxWidth: "72%"
+                  }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 700, color: "#276749" }}>
+                      Remembered
+                    </p>
+                    {newMemories.map((m, i) => (
+                      <p key={i} style={{ margin: "2px 0", fontSize: 13, color: "#2D6A4F" }}>
+                        {m}
+                      </p>
+                    ))}
+                    <p style={{ margin: "6px 0 0", fontSize: 11, color: "#68D391" }}>
+                      You can ask me about this anytime.
+                    </p>
+                  </div>
+                </div>
+              )}
               {chatLoading && (
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                   <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14 }}>
