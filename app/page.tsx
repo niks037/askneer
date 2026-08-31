@@ -542,8 +542,8 @@ export default function Home() {
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
           <label style={{ display: "block", marginBottom: 24 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>Anything I should know? <span style={{ fontWeight: 400, color: "#aaa" }}>(optional)</span></span>
-            <textarea value={profile.notes} onChange={e => setProfile({...profile, notes: e.target.value})} placeholder="e.g. premature birth, peanut allergy, started daycare..." rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#555", display: "block", marginBottom: 6 }}>What should AskNeer know about your child? <span style={{ fontWeight: 400, color: "#aaa" }}>(optional)</span></span>
+            <textarea value={profile.notes} onChange={e => setProfile({...profile, notes: e.target.value})} placeholder="allergies · health conditions · sleep struggles · feeding · anything you're worried about" rows={3} style={{ width: "100%", padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 10, fontSize: 15, outline: "none", boxSizing: "border-box", fontFamily: "inherit", resize: "none" }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
@@ -630,11 +630,20 @@ export default function Home() {
               {proModalReason === 'questions' ? '💬' : '⭐'}
             </div>
             <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#2D2D2D" }}>
-              {proModalReason === 'questions' && "You've used your 3 free questions today"}
+              {proModalReason === 'questions' && `You've used your free questions today 💛`}
               {proModalReason === 'vaccine' && "Vaccine tracker is a Pro feature"}
             </h2>
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
-              {proModalReason === 'questions' && "Upgrade to AskNeer Pro for unlimited questions, vaccine tracking, and multiple children profiles - all personalized to your child."}
+              {proModalReason === 'questions' && (
+                <div style={{ textAlign: "left" }}>
+                  {["Unlimited questions — ask anything, anytime", `${profile.name}'s memories stay with AskNeer`, "Vaccine tracker with full WHO schedule", "7-day free trial — cancel anytime"].map(f => (
+                    <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
+                      <span style={{ fontSize: 14, color: "#555" }}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child."}
             </p>
             <button onClick={async () => {
@@ -746,10 +755,40 @@ export default function Home() {
             {profile.name?.[0]?.toUpperCase() || "N"}
           </div>
           <h2 style={{ color: "#2D2D2D", margin: "0 0 8px", fontSize: 22 }}>Hi! I'm AskNeer</h2>
-          <p style={{ color: "#888", margin: "0 0 32px", fontSize: 15, textAlign: "center", maxWidth: 400 }}>
+          <p style={{ color: "#888", margin: "0 0 24px", fontSize: 15, textAlign: "center", maxWidth: 400 }}>
             Ask me anything about {profile.name}'s health, sleep, feeding, development, or behavior.
           </p>
-          <div style={{ marginBottom: 16 }}>
+
+          {/* Starter questions */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 24, maxWidth: 560 }}>
+            {[
+              `Why is ${profile.name} waking at night?`,
+              `Is ${profile.name} eating enough?`,
+              `What should ${profile.name} be doing at this age?`,
+              `What vaccines are coming up for ${profile.name}?`,
+            ].map(q => (
+              <button
+                key={q}
+                onClick={() => setInput(q)}
+                style={{
+                  background: "white",
+                  border: "1.5px solid #F0EDED",
+                  borderRadius: 20,
+                  padding: "8px 14px",
+                  fontSize: 13,
+                  color: "#555",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+                onMouseOver={e => (e.currentTarget.style.borderColor = "#E07A5F")}
+                onMouseOut={e => (e.currentTarget.style.borderColor = "#F0EDED")}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
             <button
               onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
               style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
@@ -758,6 +797,7 @@ export default function Home() {
               {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
             </button>
           </div>
+
           <div style={{ width: "100%", maxWidth: 600, display: "flex", gap: 10, alignItems: "flex-end" }}>
             <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }}} rows={2} placeholder={`Ask about ${profile.name}...`} style={{ flex: 1, padding: "14px 16px", border: "2px solid #F0F0F0", borderRadius: 16, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
