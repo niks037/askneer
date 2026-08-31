@@ -15,7 +15,7 @@ export default function Home() {
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
-  const [proModalReason, setProModalReason] = useState<'questions' | 'vaccine' | 'newchild'>('newchild');
+  const [proModalReason, setProModalReason] = useState<'questions' | 'vaccine'>('questions');
   const [showVaccines, setShowVaccines] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [children, setChildren] = useState<any[]>([]);
@@ -27,12 +27,6 @@ export default function Home() {
   const [nextVaccine, setNextVaccine] = useState<{name: string, due_date: string} | null>(null);
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
-
-  function handleNewChild() {
-    setProfile({ name: "", dob: "", notes: "", child_id: "" });
-    setMessages([]);
-    setProfileSaved(false);
-  }
 
   useEffect(() => {
     setMounted(true);
@@ -605,12 +599,6 @@ export default function Home() {
         </div>
 
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <button
-            onClick={() => isPro ? handleNewChild() : (() => { setProModalReason('newchild'); setShowProModal(true); })()}
-            style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}
-          >
-            + New Child <span style={{ fontSize: 11, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
-          </button>
           {isPro && (
             <button
               onClick={() => window.open("https://app.dodopayments.com/billing", "_blank")}
@@ -644,12 +632,10 @@ export default function Home() {
             <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#2D2D2D" }}>
               {proModalReason === 'questions' && "You've used your 3 free questions today"}
               {proModalReason === 'vaccine' && "Vaccine tracker is a Pro feature"}
-              {proModalReason === 'newchild' && "Multiple children is a Pro feature"}
             </h2>
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
               {proModalReason === 'questions' && "Upgrade to AskNeer Pro for unlimited questions, vaccine tracking, and multiple children profiles - all personalized to your child."}
               {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child."}
-              {proModalReason === 'newchild' && "Upgrade to AskNeer Pro to add more children, each with their own personalized chat, vaccines, and milestones."}
             </p>
             <button onClick={async () => {
               const res = await fetch("/api/dodo/checkout", {
