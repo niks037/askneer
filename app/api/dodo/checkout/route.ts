@@ -7,38 +7,30 @@ const dodo = new DodoPayments({
 
 export async function POST(req: Request) {
   const { email, name } = await req.json();
-
-  if (!email) {
-    return Response.json({ error: "Email required" }, { status: 400 });
-  }
+  if (!email) return Response.json({ error: "Email required" }, { status: 400 });
 
   try {
-    const subscription = await dodo.subscriptions.create({
-      billing: {
-        city: "",
-        country: "US",
-        state: "",
-        street: "",
-        zipcode: "",
-      },
+    const session = await dodo.checkoutSessions.create({
+      product_cart: [
+        {
+          product_id: process.env.DODO_PRODUCT_ID!,
+          quantity: 1,
+        },
+      ],
       customer: {
         email: email,
         name: name || email,
-        create_new_customer: true,
       },
-      product_id: process.env.DODO_PRODUCT_ID!,
-      quantity: 1,
-      payment_link: true,
       return_url: "https://www.askneer.com/?upgraded=true",
       metadata: {
         email: email,
       },
     });
 
-    if (subscription.payment_link) {
-      return Response.json({ url: subscription.payment_link });
+    if (session.checkout_url) {
+      return Response.json({ url: session.checkout_url });
     } else {
-      console.error("Dodo checkout error:", subscription);
+      console.error("Dodo session error:", session);
       return Response.json({ error: "Failed to create checkout" }, { status: 500 });
     }
   } catch (error) {
