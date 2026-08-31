@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import VaccineTracker from "@/components/VaccineTracker";
 import ChildSnapshot from "@/components/ChildSnapshot";
@@ -25,6 +25,8 @@ export default function Home() {
   const [avatarHovered, setAvatarHovered] = useState(false);
   const [memories, setMemories] = useState<string[]>([]);
   const [nextVaccine, setNextVaccine] = useState<{name: string, due_date: string} | null>(null);
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
+  const pollRef = useRef<NodeJS.Timeout | null>(null);
 
   function handleNewChild() {
     setProfile({ name: "", dob: "", notes: "", child_id: "" });
@@ -37,9 +39,26 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("upgraded") === "true") {
       window.history.replaceState({}, "", "/");
-      setTimeout(() => loadProfile(), 2000);
+      setShowUpgradeSuccess(true);
+      // Poll for Pro status — webhook may take a few seconds to fire
+      let attempts = 0;
+      pollRef.current = setInterval(async () => {
+        attempts++;
+        await loadProfile();
+        if (attempts >= 8) {
+          if (pollRef.current) clearInterval(pollRef.current);
+        }
+      }, 3000);
     }
   }, []);
+
+  // Stop polling once isPro is confirmed
+  useEffect(() => {
+    if (isPro && pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, [isPro]);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -73,6 +92,7 @@ export default function Home() {
     }
     const res = await fetch(`/api/profile?email=${session.user.email}`);
     const data = await res.json();
+    const isProUser = data.profile?.is_pro || false;
     if (data.profile) {
       setProfile({
         name: data.profile.child_name,
@@ -81,7 +101,7 @@ export default function Home() {
         child_id: data.profile.child_id
       });
       setProfileSaved(true);
-      setIsPro(data.profile.is_pro || false);
+      setIsPro(isProUser);
     }
     if (data.children) {
       setChildren(data.children);
@@ -95,14 +115,19 @@ export default function Home() {
     const memData = await memRes.json();
     if (memData.memories) setMemories(memData.memories);
 
-    const vacRes = await fetch(`/api/vaccines?email=${encodeURIComponent(session.user.email)}&child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
-    const vacData = await vacRes.json();
-    if (vacData.vaccines) {
-      const today = new Date();
-      const upcoming = vacData.vaccines
-        .filter((v: any) => !v.completed && new Date(v.due_date) >= today)
-        .sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
-      if (upcoming.length > 0) setNextVaccine(upcoming[0]);
+    // Only fetch vaccine data for Pro users
+    if (isProUser) {
+      const vacRes = await fetch(`/api/vaccines?email=${encodeURIComponent(session.user.email)}&child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
+      const vacData = await vacRes.json();
+      if (vacData.vaccines) {
+        const today = new Date();
+        const upcoming = vacData.vaccines
+          .filter((v: any) => !v.completed && new Date(v.due_date) >= today)
+          .sort((a: any, b: any) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+        if (upcoming.length > 0) setNextVaccine(upcoming[0]);
+      }
+    } else {
+      setNextVaccine(null);
     }
     setProfileLoading(false);
   }
@@ -541,6 +566,14 @@ export default function Home() {
     <div style={{ height: "100vh", background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       <InstallPrompt />
 
+      {/* Pro upgrade success banner */}
+      {showUpgradeSuccess && (
+        <div style={{ background: "#38A169", color: "white", padding: "10px 20px", textAlign: "center", fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          🎉 Welcome to AskNeer Pro! Your account is being activated...
+          <button onClick={() => setShowUpgradeSuccess(false)} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: 16, marginLeft: 8 }}>✕</button>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ background: "white", padding: "12px 20px", borderBottom: "1px solid #F0F0F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -596,7 +629,7 @@ export default function Home() {
           name={profile.name}
           dob={profile.dob}
           memories={memories}
-          nextVaccine={nextVaccine}
+          nextVaccine={isPro ? nextVaccine : null}
           getAge={getAge}
         />
       )}
@@ -735,7 +768,8 @@ export default function Home() {
               onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
               style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
+              💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
+              {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
             </button>
           </div>
           <div style={{ width: "100%", maxWidth: 600, display: "flex", gap: 10, alignItems: "flex-end" }}>
@@ -785,7 +819,8 @@ export default function Home() {
                   onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
                   style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  💉 Vaccine Schedule <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>
+                  💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
+                  {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
               </div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
