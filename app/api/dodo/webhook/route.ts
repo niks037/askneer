@@ -1,64 +1,37 @@
 import { createClient } from "@supabase/supabase-js";
-import crypto from "crypto";
+import DodoPayments from "dodopayments";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_KEY!
 );
 
-function verifySignature(payload: string, signature: string, timestamp: string): boolean {
-  let secret = process.env.DODO_WEBHOOK_SECRET || "";
-  
-  // Standard Webhooks: if secret starts with whsec_, base64 decode it
-  if (secret.startsWith("whsec_")) {
-    secret = secret.slice(6); // remove whsec_ prefix
-    const secretBytes = Buffer.from(secret, "base64");
-    const signedPayload = `${timestamp}.${payload}`;
-    const expectedSignature = crypto
-      .createHmac("sha256", secretBytes)
-      .update(signedPayload)
-      .digest("base64");
-    const providedSig = signature.split(",")[1];
-    if (!providedSig) return false;
-    try {
-      return crypto.timingSafeEqual(
-        Buffer.from(expectedSignature),
-        Buffer.from(providedSig)
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  // Plain secret (no prefix)
-  const signedPayload = `${timestamp}.${payload}`;
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(signedPayload)
-    .digest("base64");
-  const providedSig = signature.split(",")[1];
-  if (!providedSig) return false;
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(expectedSignature),
-      Buffer.from(providedSig)
-    );
-  } catch {
-    return false;
-  }
-}
+const dodo = new DodoPayments({
+  bearerToken: process.env.DODO_PAYMENTS_API_KEY || process.env.DODO_API_KEY,
+  baseURL: process.env.DODO_PAYMENTS_BASE_URL || "https://live.dodopayments.com",
+  webhookKey: process.env.DODO_WEBHOOK_SECRET,
+});
 
 export async function POST(req: Request) {
   const rawBody = await req.text();
-  const signature = req.headers.get("webhook-signature") || "";
-  const timestamp = req.headers.get("webhook-timestamp") || "";
+  const headers = {
+    "webhook-id": req.headers.get("webhook-id") || "",
+    "webhook-signature": req.headers.get("webhook-signature") || "",
+    "webhook-timestamp": req.headers.get("webhook-timestamp") || "",
+  };
 
-  if (!verifySignature(rawBody, signature, timestamp)) {
-    console.error("Invalid webhook signature");
+  let payload: any;
+
+  try {
+    payload = dodo.webhooks.unwrap(
+      rawBody,
+      { headers }
+    );
+  } catch (err) {
+    console.error("Webhook verification failed:", err);
     return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  const payload = JSON.parse(rawBody);
   const eventType = payload.type;
   const data = payload.data;
 
