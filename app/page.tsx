@@ -203,7 +203,7 @@ export default function Home() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input, profile: { ...profile, age: getAge(profile.dob) }, history: updatedMessages, email: session?.user?.email })
+        body: JSON.stringify({ message: input, history: updatedMessages })
       });
       if (res.status === 403) {
   const data = await res.json();
