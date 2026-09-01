@@ -668,7 +668,7 @@ if (!res.ok) throw new Error("API error");
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {isPro && (
             <button
-              onClick={() => window.open("https://dodopayments.com/customer-portal", "_blank")}
+              onClick={() => window.open("mailto:info@askneer.com?subject=Manage my AskNeer Pro subscription", "_blank")}
               style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}
             >
               Manage Plan
