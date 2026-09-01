@@ -46,6 +46,7 @@ export default function Home() {
         await loadProfile();
         if (attempts >= 8) {
           if (pollRef.current) clearInterval(pollRef.current);
+          setShowUpgradeSuccess(false); // hide banner if Pro not confirmed
         }
       }, 3000);
     }
