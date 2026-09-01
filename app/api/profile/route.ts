@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { auth } from "@/auth";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -6,11 +7,12 @@ const supabase = createClient(
 );
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const email = searchParams.get("email");
-  const child_id = searchParams.get("child_id");
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ profile: null, children: [] }, { status: 401 });
+  const email = session.user.email;
 
-  if (!email) return Response.json({ profile: null, children: [] });
+  const { searchParams } = new URL(req.url);
+  const child_id = searchParams.get("child_id");
 
   const { data: children } = await supabase
     .from("profiles")
@@ -43,10 +45,12 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { email, child_name, child_dob, child_notes, child_id } = body;
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ success: false }, { status: 401 });
+  const email = session.user.email;
 
-  if (!email) return Response.json({ success: false });
+  const body = await req.json();
+  const { child_name, child_dob, child_notes, child_id } = body;
 
   if (child_id) {
     await supabase
@@ -65,12 +69,10 @@ export async function POST(req: Request) {
         .from("profiles")
         .update({ is_active: false })
         .eq("email", email);
-
       await supabase
         .from("profiles")
         .insert([{ email, child_name, child_dob, child_notes, is_active: true }]);
     } else {
-      // First child — always active
       await supabase
         .from("profiles")
         .insert([{ email, child_name, child_dob, child_notes, is_active: true }]);
@@ -81,8 +83,12 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  const { email, child_id } = await req.json();
-  if (!email || !child_id) return Response.json({ success: false });
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ success: false }, { status: 401 });
+  const email = session.user.email;
+
+  const { child_id } = await req.json();
+  if (!child_id) return Response.json({ success: false });
 
   await supabase
     .from("profiles")

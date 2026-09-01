@@ -89,7 +89,7 @@ export default function Home() {
       setProfileLoading(false);
       return;
     }
-    const res = await fetch(`/api/profile?email=${session.user.email}`);
+    const res = await fetch(`/api/profile`);
     const data = await res.json();
     const isProUser = data.profile?.is_pro || false;
     if (data.profile) {
@@ -137,7 +137,6 @@ export default function Home() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: session.user.email,
         child_name: p.name,
         child_dob: p.dob,
         child_notes: p.notes,
@@ -150,7 +149,7 @@ export default function Home() {
     await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session?.user?.email, child_id: child.child_id })
+      body: JSON.stringify({ child_id: child.child_id })
     });
     setProfile({ name: child.child_name, dob: child.child_dob, notes: child.child_notes || "", child_id: child.child_id });
     setMessages([]);
@@ -164,7 +163,7 @@ export default function Home() {
     await fetch("/api/memories", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session?.user?.email, child_name: profile.name, memory_text: memory })
+      body: JSON.stringify({ child_name: profile.name, memory_text: memory })
     });
     setMemories(prev => prev.filter(m => m !== memory));
   }
@@ -779,7 +778,6 @@ if (!res.ok) throw new Error("API error");
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  email: session?.user?.email,
                   child_name: editProfile.name,
                   child_dob: editProfile.dob,
                   child_notes: editProfile.notes,
