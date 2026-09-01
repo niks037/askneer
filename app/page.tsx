@@ -668,7 +668,19 @@ if (!res.ok) throw new Error("API error");
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {isPro && (
             <button
-              onClick={() => window.open("mailto:info@askneer.com?subject=Manage my AskNeer Pro subscription", "_blank")}
+              onClick={async () => {
+                const res = await fetch("/api/dodo/portal", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ email: session?.user?.email }),
+                });
+                const data = await res.json();
+                if (data.url) {
+                  window.open(data.url, "_blank");
+                } else {
+                  alert("Unable to open billing portal. Please contact info@askneer.com");
+                }
+              }}
               style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}
             >
               Manage Plan
