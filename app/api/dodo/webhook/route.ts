@@ -1,4 +1,3 @@
- 
 import { createClient } from "@supabase/supabase-js";
 import { createHmac } from "crypto";
 
@@ -49,8 +48,9 @@ export async function POST(req: Request) {
         .from("profiles")
         .update({
           is_pro: true,
+          is_active: true,
           subscription_id: data?.subscription_id || data?.id,
-          customer_id: data?.customer?.customer_id || data?.customer?.customer_id,
+          customer_id: data?.customer?.customer_id,
           trial_ends_at: data?.trial_period_end || null,
         })
         .eq("email", email);
@@ -73,7 +73,6 @@ export async function POST(req: Request) {
       console.log("Downgraded from Pro:", email);
 
     } else if (eventType === "subscription.on_hold") {
-      // Payment failed — keep Pro for now but flag it
       console.log("Subscription on hold:", email);
     }
 
