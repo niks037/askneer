@@ -458,7 +458,7 @@ if (!res.ok) throw new Error("API error");
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 14 }}>
               {[
                 { emoji: "❤️", title: "Child Timeline", desc: "Every important moment, remembered forever.", hot: true },
-                { emoji: "🌙", title: "Sleep Tracker", desc: "Understand patterns, not just hours." },
+                { emoji: "🌙", title: "Sleep Coach", desc: "Tell AskNeer how your child slept. Get tonight's plan." },
                 { emoji: "🍼", title: "Feeding Journal", desc: "Never lose track of meals or first foods." },
                 { emoji: "📈", title: "Growth & Milestones", desc: "See how your child develops over time." },
               ].map((f: any) => (
@@ -519,7 +519,7 @@ if (!res.ok) throw new Error("API error");
                 <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 17, color: "#2D2D2D" }}>Pro</p>
                 <p style={{ margin: "0 0 16px", fontSize: 12, color: "#aaa" }}>For parents who want more</p>
                 <p style={{ margin: "0 0 20px", fontSize: 34, fontWeight: 800, color: "#E07A5F" }}>$4.99<span style={{ fontSize: 15, fontWeight: 400, color: "#aaa" }}>/mo</span></p>
-                {["Unlimited questions", "7-day free trial", "Vaccine tracker", "Multiple children profiles", "Early access to all new features", "Everything in Free"].map(f => (
+                {["Unlimited questions", "7-day free trial", "Vaccine tracker", "Sleep Coach (coming soon)", "Early access to all new features", "Everything in Free"].map(f => (
                   <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
                     <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
                     <span style={{ fontSize: 13, color: "#555" }}>{f}</span>
