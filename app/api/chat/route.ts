@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
+import { auth } from "@/auth";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const supabase = createClient(
@@ -8,7 +9,13 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  const { message, profile, history, email } = await req.json();
+  const session = await auth();
+  if (!session?.user?.email) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const email = session.user.email; // ← from server session, not browser
+
+  const { message, profile, history } = await req.json(); // ← removed email from body
 
   // Check Pro status and enforce daily limit for free users
   const { data: profileData } = await supabase
