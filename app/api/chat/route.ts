@@ -115,14 +115,22 @@ MEDICAL SAFETY RULES:
     { child_name: childName, child_age: childAge, role: "assistant", content: reply, email },
   ]);
 
-  // Trigger memory extraction in background
+  // Trigger memory extraction in background — secure server-to-server call
   const baseUrl = process.env.NEXTAUTH_URL || "https://www.askneer.com";
   fetch(`${baseUrl}/api/memories`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-internal-secret": process.env.INTERNAL_API_SECRET || "",
+    },
     body: JSON.stringify({
+      email,
       child_name: childName,
-      messages: [...history, { role: "user", content: message }, { role: "assistant", content: reply }],
+      messages: [
+        ...history,
+        { role: "user", content: message },
+        { role: "assistant", content: reply }
+      ],
     }),
   }).catch(() => {});
 

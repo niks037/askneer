@@ -9,12 +9,17 @@ const supabase = createClient(
 );
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user?.email) return Response.json({ ok: false }, { status: 401 });
-  const email = session.user.email;
+  const internalSecret = req.headers.get("x-internal-secret");
+  const isInternalCall = internalSecret && internalSecret === process.env.INTERNAL_API_SECRET;
 
-  const { child_name, messages } = await req.json();
-  if (!messages?.length) return Response.json({ ok: true });
+  const body = await req.json();
+  const { child_name, messages, email: bodyEmail } = body;
+
+  // Get email from session (browser calls) or body (server-to-server calls)
+  const session = await auth();
+  const email = session?.user?.email || (isInternalCall ? bodyEmail : null);
+
+  if (!email || !messages?.length) return Response.json({ ok: true });
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
