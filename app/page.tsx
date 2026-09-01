@@ -281,7 +281,7 @@ if (!res.ok) throw new Error("API error");
           </h1>
 
           <p style={{ fontSize: 16, color: "#666", lineHeight: 1.7, margin: "0 0 28px", maxWidth: 380 }}>
-            The AI that grows with your child and actually remembers them.
+            Parenting advice that starts with your child. AskNeer remembers what matters — so you don't have to explain everything again.
           </p>
 
           <div style={{ width: "100%", maxWidth: 380 }}>
@@ -426,11 +426,11 @@ if (!res.ok) throw new Error("API error");
         {/* Features */}
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "64px 24px" }}>
           <h2 style={{ textAlign: "center", fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: "#2D2D2D", margin: "0 0 40px", letterSpacing: -0.5 }}>
-            Not another AI chatbot. A companion that grows with your child.
+            Parenting advice that actually starts with your child.
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
             {[
-              { emoji: "🧠", title: "Remembers everything", desc: "Tell Neer about allergies or milestones once - it remembers forever.", pro: false },
+              { emoji: "🧠", title: "Remembers what matters", desc: "Tell AskNeer about allergies, milestones, or sleep once. Every answer builds on what you've shared.", pro: false },
               { emoji: "💉", title: "Vaccine tracker", desc: "Auto-calculates your child's complete vaccine schedule from date of birth.", pro: true },
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
