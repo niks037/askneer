@@ -105,7 +105,7 @@ export default function Home() {
     if (data.children) {
       setChildren(data.children);
     }
-    const chatRes = await fetch(`/api/messages?email=${session.user.email}`);
+    const chatRes = await fetch(`/api/messages`);
     const chatData = await chatRes.json();
     if (chatData.messages?.length > 0) {
       setMessages(chatData.messages);
@@ -154,7 +154,7 @@ export default function Home() {
     setProfile({ name: child.child_name, dob: child.child_dob, notes: child.child_notes || "", child_id: child.child_id });
     setMessages([]);
     setShowChildPicker(false);
-    const chatRes = await fetch(`/api/messages?email=${session?.user?.email}`);
+    const chatRes = await fetch(`/api/messages`);
     const chatData = await chatRes.json();
     if (chatData.messages?.length > 0) setMessages(chatData.messages);
   }
