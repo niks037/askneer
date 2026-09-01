@@ -679,19 +679,18 @@ if (!res.ok) throw new Error("API error");
       </div>
 
       {/* Child Snapshot bar */}
-      {profileSaved && (
-        <div onClick={() => isPro ? setShowMemoryView(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()} style={{ cursor: "pointer" }}>
+      {profileSaved && isPro && (
+        <div onClick={() => setShowMemoryView(true)} style={{ cursor: "pointer" }}>
           <ChildSnapshot
-              name={profile.name}
-              dob={profile.dob}
-              memories={memories}
-              nextVaccine={isPro ? nextVaccine : null}
-              getAge={getAge}
-              isPro={isPro}
+            name={profile.name}
+            dob={profile.dob}
+            memories={memories}
+            nextVaccine={nextVaccine}
+            getAge={getAge}
+            isPro={isPro}
           />
         </div>
       )}
-
       {/* Pro gate modal */}
       {showProModal && (
         <div onClick={() => setShowProModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
