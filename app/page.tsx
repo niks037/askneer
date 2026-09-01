@@ -39,7 +39,7 @@ export default function Home() {
     if (params.get("upgraded") === "true") {
       window.history.replaceState({}, "", "/");
       setShowUpgradeSuccess(true);
-      // Poll for Pro status — webhook may take a few seconds to fire
+      // Poll for Pro status - webhook may take a few seconds to fire
       let attempts = 0;
       pollRef.current = setInterval(async () => {
         attempts++;
@@ -225,7 +225,7 @@ if (!res.ok) throw new Error("API error");
     } catch (error) {
       setMessages([...updatedMessages, { 
         role: "assistant", 
-        content: "Something went wrong — your question wasn't lost. Please try again." 
+        content: "Something went wrong - your question wasn't lost. Please try again." 
       }]);
     } finally {
       setChatLoading(false);
@@ -281,7 +281,7 @@ if (!res.ok) throw new Error("API error");
           </h1>
 
           <p style={{ fontSize: 16, color: "#666", lineHeight: 1.7, margin: "0 0 28px", maxWidth: 380 }}>
-            Parenting advice that starts with your child. AskNeer remembers what matters — so you don't have to explain everything again.
+            Parenting advice that starts with your child. AskNeer remembers what matters - so you don't have to explain everything again.
           </p>
 
           <div style={{ width: "100%", maxWidth: 380 }}>
@@ -333,7 +333,7 @@ if (!res.ok) throw new Error("API error");
         {/* Social proof */}
         <div style={{ background: "white", borderTop: "1px solid #F0EDED", borderBottom: "1px solid #F0EDED", padding: "20px 24px", textAlign: "center" }}>
           <p style={{ margin: 0, color: "#888", fontSize: 14 }}>
-            From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> — science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
+            From the team behind <strong style={{ color: "#2D2D2D" }}>NeernMom</strong> - science-backed parenting trusted by parents worldwide 🇺🇸 🇬🇧 🇵🇭
           </p>
         </div>
 
@@ -357,7 +357,7 @@ if (!res.ok) throw new Error("API error");
             ))}
           </div>
           <p style={{ marginTop: 28, fontSize: 15, color: "#555", lineHeight: 1.7 }}>
-            AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> — their age, history, allergies, milestones.
+            AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> - their age, history, allergies, milestones.
           </p>
         </div>
 
@@ -717,7 +717,7 @@ if (!res.ok) throw new Error("API error");
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
               {proModalReason === 'questions' && (
                 <div style={{ textAlign: "left" }}>
-                  {["Unlimited questions — ask anything, anytime", `${profile.name}'s memories stay with AskNeer`, "Vaccine tracker with full WHO schedule", "7-day free trial — cancel anytime"].map(f => (
+                  {["Unlimited questions - ask anything, anytime", `${profile.name}'s memories stay with AskNeer`, "Vaccine tracker with full WHO schedule", "7-day free trial - cancel anytime"].map(f => (
                     <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
                       <span style={{ fontSize: 14, color: "#555" }}>{f}</span>
