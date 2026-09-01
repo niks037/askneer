@@ -23,10 +23,7 @@ export async function POST(req: Request) {
   let payload: any;
 
   try {
-    payload = dodo.webhooks.unwrap(
-      rawBody,
-      { headers }
-    );
+    payload = dodo.webhooks.unwrap(rawBody, { headers });
   } catch (err) {
     console.error("Webhook verification failed:", err);
     return Response.json({ error: "Invalid signature" }, { status: 401 });
@@ -61,12 +58,24 @@ export async function POST(req: Request) {
         .eq("email", email);
       console.log("Upgraded to Pro:", email);
 
-    } else if (eventType === "subscription.cancelled" || eventType === "subscription.expired") {
+    } else if (eventType === "subscription.cancelled") {
+      // User cancelled — keep Pro until period ends
+      // Dodo will send subscription.expired when access actually ends
+      await supabase
+        .from("profiles")
+        .update({
+          subscription_id: data?.subscription_id || data?.id,
+        })
+        .eq("email", email);
+      console.log("Subscription cancelled but Pro continues until period end:", email);
+
+    } else if (eventType === "subscription.expired") {
+      // Access actually ended — remove Pro now
       await supabase
         .from("profiles")
         .update({ is_pro: false, subscription_id: null })
         .eq("email", email);
-      console.log("Downgraded from Pro:", email);
+      console.log("Pro access ended:", email);
 
     } else if (eventType === "subscription.on_hold") {
       console.log("Subscription on hold:", email);

@@ -654,7 +654,7 @@ if (!res.ok) throw new Error("API error");
             <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D", display: "flex", alignItems: "center", gap: 6 }}>
               {profile.name}
               <button
-                onClick={() => setShowMemoryView(true)}
+                onClick={() => isPro ? setShowMemoryView(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
                 title="What AskNeer remembers"
                 style={{ background: "#F0FFF4", border: "1px solid #9AE6B4", borderRadius: 99, padding: "2px 8px", fontSize: 11, fontWeight: 600, color: "#276749", cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}
               >
@@ -668,7 +668,7 @@ if (!res.ok) throw new Error("API error");
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {isPro && (
             <button
-              onClick={() => window.open("https://app.dodopayments.com/billing", "_blank")}
+              onClick={() => window.open("https://dodopayments.com/customer-portal", "_blank")}
               style={{ background: "none", border: "1px solid #E8E8E8", borderRadius: 8, padding: "6px 14px", cursor: "pointer", color: "#888", fontSize: 13 }}
             >
               Manage Plan
@@ -680,7 +680,7 @@ if (!res.ok) throw new Error("API error");
 
       {/* Child Snapshot bar */}
       {profileSaved && (
-        <div onClick={() => setShowMemoryView(true)} style={{ cursor: "pointer" }}>
+        <div onClick={() => isPro ? setShowMemoryView(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()} style={{ cursor: "pointer" }}>
           <ChildSnapshot
             name={profile.name}
             dob={profile.dob}
