@@ -12,10 +12,6 @@ export async function POST(req: Request) {
   const internalSecret = req.headers.get("x-internal-secret");
   const isInternalCall = internalSecret && internalSecret === process.env.INTERNAL_API_SECRET;
 
-  console.log("Secret received:", internalSecret?.substring(0, 8));
-  console.log("Secret expected:", process.env.INTERNAL_API_SECRET?.substring(0, 8));
-  console.log("Is internal:", isInternalCall);
-
   const body = await req.json();
   const { child_name, messages, email: bodyEmail } = body;
 
@@ -23,7 +19,6 @@ export async function POST(req: Request) {
   const email = session?.user?.email || (isInternalCall ? bodyEmail : null);
 
   if (!email || !messages?.length) {
-    console.log("Rejected — no email or no messages. email:", email, "isInternal:", isInternalCall);
     return Response.json({ ok: false }, { status: 401 });
   }
 
