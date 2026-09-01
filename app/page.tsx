@@ -682,11 +682,12 @@ if (!res.ok) throw new Error("API error");
       {profileSaved && (
         <div onClick={() => isPro ? setShowMemoryView(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()} style={{ cursor: "pointer" }}>
           <ChildSnapshot
-            name={profile.name}
-            dob={profile.dob}
-            memories={memories}
-            nextVaccine={isPro ? nextVaccine : null}
-            getAge={getAge}
+              name={profile.name}
+              dob={profile.dob}
+              memories={memories}
+              nextVaccine={isPro ? nextVaccine : null}
+              getAge={getAge}
+              isPro={isPro}
           />
         </div>
       )}

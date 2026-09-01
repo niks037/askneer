@@ -6,9 +6,10 @@ interface Props {
   memories: string[]
   nextVaccine: { name: string; due_date: string } | null
   getAge: (dob: string) => string
+  isPro: boolean
 }
 
-export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge }: Props) {
+export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge, isPro }: Props) {
   // Deduplicate memories (case-insensitive)
   const seen = new Set<string>()
   const uniqueMemories = memories.filter(m => {
@@ -44,14 +45,6 @@ export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge
   const fmt = (d: string) => new Date(d).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short'
   })
-
-  // Shorten long memories at word boundaries, not mid-word
-  const shorten = (text: string, max: number = 32) => {
-    if (text.length <= max) return text
-    const cut = text.substring(0, max)
-    const lastSpace = cut.lastIndexOf(' ')
-    return cut.substring(0, lastSpace > 10 ? lastSpace : max) + '…'
-  }
 
   const items = [
     ...allergies.map(a => ({ icon: '⚠️', text: a })),
@@ -92,9 +85,11 @@ export default function ChildSnapshot({ name, dob, memories, nextVaccine, getAge
             </span>
           </div>
         ))}
-      </div>
-      <div style={{ fontSize: 10, color: "#ddd", paddingRight: 12, flexShrink: 0, alignSelf: "center" }}>
-        Tap to view all
+        {isPro && (
+          <div style={{ fontSize: 10, color: "#ddd", paddingLeft: 4, flexShrink: 0 }}>
+            Tap to view all
+          </div>
+        )}
       </div>
     </div>
   )
