@@ -1,15 +1,12 @@
 import DodoPayments from "dodopayments";
 
 const dodo = new DodoPayments({
-  bearerToken: process.env.DODO_API_KEY,
-  baseURL: "https://test.dodopayments.com",
+  bearerToken: process.env.DODO_PAYMENTS_API_KEY || process.env.DODO_API_KEY,
+  baseURL: process.env.DODO_PAYMENTS_BASE_URL || "https://live.dodopayments.com",
 });
 
 export async function POST(req: Request) {
   const { email, name } = await req.json();
-  // DEBUG - remove after fixing    
-  console.log("API KEY starts with:", process.env.DODO_API_KEY?.substring(0, 10));
-  console.log("BASE URL:", process.env.DODO_PAYMENTS_BASE_URL);
   if (!email) return Response.json({ error: "Email required" }, { status: 400 });
 
   try {
