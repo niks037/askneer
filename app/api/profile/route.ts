@@ -12,7 +12,6 @@ export async function GET(req: Request) {
 
   if (!email) return Response.json({ profile: null, children: [] });
 
-  // Get all children for this email
   const { data: children } = await supabase
     .from("profiles")
     .select("*")
@@ -23,13 +22,22 @@ export async function GET(req: Request) {
     return Response.json({ profile: null, children: [] });
   }
 
-  // If child_id specified, return that child
+  // If no active child exists, automatically activate the first one
+  const hasActive = children.some(c => c.is_active);
+  if (!hasActive) {
+    await supabase
+      .from("profiles")
+      .update({ is_active: true })
+      .eq("email", email)
+      .eq("child_id", children[0].child_id);
+    children[0].is_active = true;
+  }
+
   if (child_id) {
     const child = children.find(c => c.child_id === child_id);
     return Response.json({ profile: child || children[0], children });
   }
 
-  // Otherwise return active child or first child
   const active = children.find(c => c.is_active) || children[0];
   return Response.json({ profile: active, children });
 }
@@ -41,21 +49,18 @@ export async function POST(req: Request) {
   if (!email) return Response.json({ success: false });
 
   if (child_id) {
-    // Update existing child
     await supabase
       .from("profiles")
       .update({ child_name, child_dob, child_notes })
       .eq("email", email)
       .eq("child_id", child_id);
   } else {
-    // Check if this is first child
     const { data: existing } = await supabase
       .from("profiles")
       .select("id")
       .eq("email", email);
 
     if (existing && existing.length > 0) {
-      // Add new child — deactivate all others first
       await supabase
         .from("profiles")
         .update({ is_active: false })
@@ -65,7 +70,7 @@ export async function POST(req: Request) {
         .from("profiles")
         .insert([{ email, child_name, child_dob, child_notes, is_active: true }]);
     } else {
-      // First child ever
+      // First child — always active
       await supabase
         .from("profiles")
         .insert([{ email, child_name, child_dob, child_notes, is_active: true }]);
@@ -76,24 +81,20 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  // Switch active child
   const { email, child_id } = await req.json();
   if (!email || !child_id) return Response.json({ success: false });
 
-  // Deactivate all children
   await supabase
     .from("profiles")
     .update({ is_active: false })
     .eq("email", email);
 
-  // Activate selected child
   await supabase
     .from("profiles")
     .update({ is_active: true })
     .eq("email", email)
     .eq("child_id", child_id);
 
-  // Return the selected child's full profile
   const { data } = await supabase
     .from("profiles")
     .select("*")
