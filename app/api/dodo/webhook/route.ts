@@ -7,7 +7,30 @@ const supabase = createClient(
 );
 
 function verifySignature(payload: string, signature: string, timestamp: string): boolean {
-  const secret = process.env.DODO_WEBHOOK_SECRET || "";
+  let secret = process.env.DODO_WEBHOOK_SECRET || "";
+  
+  // Standard Webhooks: if secret starts with whsec_, base64 decode it
+  if (secret.startsWith("whsec_")) {
+    secret = secret.slice(6); // remove whsec_ prefix
+    const secretBytes = Buffer.from(secret, "base64");
+    const signedPayload = `${timestamp}.${payload}`;
+    const expectedSignature = crypto
+      .createHmac("sha256", secretBytes)
+      .update(signedPayload)
+      .digest("base64");
+    const providedSig = signature.split(",")[1];
+    if (!providedSig) return false;
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(expectedSignature),
+        Buffer.from(providedSig)
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  // Plain secret (no prefix)
   const signedPayload = `${timestamp}.${payload}`;
   const expectedSignature = crypto
     .createHmac("sha256", secret)
