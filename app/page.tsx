@@ -116,7 +116,7 @@ export default function Home() {
 
     // Only fetch vaccine data for Pro users
     if (isProUser) {
-      const vacRes = await fetch(`/api/vaccines?email=${encodeURIComponent(session.user.email)}&child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
+      const vacRes = await fetch(`/api/vaccines?child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
       const vacData = await vacRes.json();
       if (vacData.vaccines) {
         const today = new Date();

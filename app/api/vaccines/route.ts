@@ -1,11 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
+import { auth } from "@/auth";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_KEY!
 );
 
-// WHO global vaccine schedule — weeks/months after birth
 const WHO_SCHEDULE = [
   { name: "BCG", description: "Protects against tuberculosis", weeks: 0 },
   { name: "Hepatitis B (Birth)", description: "Protects against Hepatitis B virus", weeks: 0 },
@@ -39,12 +39,15 @@ const WHO_SCHEDULE = [
 ];
 
 export async function GET(req: Request) {
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ vaccines: [] }, { status: 401 });
+  const email = session.user.email;
+
   const { searchParams } = new URL(req.url);
-  const email = searchParams.get("email");
   const child_name = searchParams.get("child_name");
   const dob = searchParams.get("dob");
 
-  if (!email || !dob) return Response.json({ vaccines: [] });
+  if (!dob) return Response.json({ vaccines: [] });
 
   // Check if vaccines already generated for this child
   const { data: existing } = await supabase
@@ -71,7 +74,6 @@ export async function GET(req: Request) {
     };
   });
 
-  // Insert into Supabase
   const { data: inserted } = await supabase
     .from("vaccinations")
     .insert(vaccines)
@@ -81,7 +83,23 @@ export async function GET(req: Request) {
 }
 
 export async function PATCH(req: Request) {
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ vaccine: null }, { status: 401 });
+  const email = session.user.email;
+
   const { id, completed, completed_date } = await req.json();
+
+  // Verify this vaccination belongs to the authenticated user
+  const { data: existing } = await supabase
+    .from("vaccinations")
+    .select("id")
+    .eq("id", id)
+    .eq("email", email)
+    .single();
+
+  if (!existing) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
 
   const { data } = await supabase
     .from("vaccinations")
