@@ -1,22 +1,36 @@
 import { createClient } from "@supabase/supabase-js";
-import { createHmac } from "crypto";
+import crypto from "crypto";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_KEY!
 );
 
+function verifySignature(payload: string, signature: string, timestamp: string): boolean {
+  const secret = process.env.DODO_WEBHOOK_SECRET || "";
+  const signedPayload = `${timestamp}.${payload}`;
+  const expectedSignature = crypto
+    .createHmac("sha256", secret)
+    .update(signedPayload)
+    .digest("base64");
+  const providedSig = signature.split(",")[1];
+  if (!providedSig) return false;
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(expectedSignature),
+      Buffer.from(providedSig)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: Request) {
   const rawBody = await req.text();
   const signature = req.headers.get("webhook-signature") || "";
-  const secret = process.env.DODO_WEBHOOK_SECRET || "";
+  const timestamp = req.headers.get("webhook-timestamp") || "";
 
-  // Verify signature
-  const expectedSig = createHmac("sha256", secret)
-    .update(rawBody)
-    .digest("hex");
-
-  if (signature !== expectedSig) {
+  if (!verifySignature(rawBody, signature, timestamp)) {
     console.error("Invalid webhook signature");
     return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
@@ -27,7 +41,6 @@ export async function POST(req: Request) {
 
   console.log("Dodo webhook received:", eventType);
 
-  // Get email from metadata or customer
   const email =
     data?.metadata?.email ||
     data?.customer?.email ||
@@ -39,11 +52,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    if (
-      eventType === "subscription.active" ||
-      eventType === "payment.succeeded"
-    ) {
-      // Upgrade to Pro
+    if (eventType === "subscription.active" || eventType === "payment.succeeded") {
       await supabase
         .from("profiles")
         .update({
@@ -54,22 +63,13 @@ export async function POST(req: Request) {
           trial_ends_at: data?.trial_period_end || null,
         })
         .eq("email", email);
-
       console.log("Upgraded to Pro:", email);
 
-    } else if (
-      eventType === "subscription.cancelled" ||
-      eventType === "subscription.expired"
-    ) {
-      // Downgrade from Pro
+    } else if (eventType === "subscription.cancelled" || eventType === "subscription.expired") {
       await supabase
         .from("profiles")
-        .update({
-          is_pro: false,
-          subscription_id: null,
-        })
+        .update({ is_pro: false, subscription_id: null })
         .eq("email", email);
-
       console.log("Downgraded from Pro:", email);
 
     } else if (eventType === "subscription.on_hold") {
