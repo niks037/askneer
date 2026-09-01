@@ -110,7 +110,7 @@ export default function Home() {
     if (chatData.messages?.length > 0) {
       setMessages(chatData.messages);
     }
-    const memRes = await fetch(`/api/memories?email=${session.user.email}&child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
+    const memRes = await fetch(`/api/memories?child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
     const memData = await memRes.json();
     if (memData.memories) setMemories(memData.memories);
 
@@ -233,7 +233,7 @@ if (!res.ok) throw new Error("API error");
     const previousMemories = new Set(memories);
     [8000, 16000].forEach(delay => {
       setTimeout(async () => {
-        const memRes = await fetch(`/api/memories?email=${session?.user?.email}&child_name=${encodeURIComponent(profile.name)}`);
+        const memRes = await fetch(`/api/memories?child_name=${encodeURIComponent(profile.name)}`);
         const memData = await memRes.json();
         if (memData.memories) {
           setMemories(memData.memories);
