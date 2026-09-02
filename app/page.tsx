@@ -870,7 +870,9 @@ if (!res.ok) throw new Error("API error");
               </button>
             ))}
           </div>
-          <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+
+          {/* Feature buttons */}
+          <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
               style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
@@ -884,24 +886,6 @@ if (!res.ok) throw new Error("API error");
             >
               🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
               {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
-            </button>
-
-            {showSleepCoach && (
-              <SleepCoach
-                childName={profile.name}
-                childId={profile.child_id}
-                onClose={() => setShowSleepCoach(false)}
-              />
-            )}
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <button
-              onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
-              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
-            >
-              💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
-              {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
             </button>
           </div>
 
@@ -1014,6 +998,14 @@ if (!res.ok) throw new Error("API error");
           memories={memories}
           onClose={() => setShowMemoryView(false)}
           onDelete={deleteMemory}
+        />
+      )}
+            {/* Sleep Coach */}
+      {showSleepCoach && (
+        <SleepCoach
+          childName={profile.name}
+          childId={profile.child_id}
+          onClose={() => setShowSleepCoach(false)}
         />
       )}
     </div>
