@@ -6,6 +6,7 @@ import ChildSnapshot from "@/components/ChildSnapshot";
 import InstallPrompt from "@/components/InstallPrompt";
 import MemoryView from "@/components/MemoryView";
 import SleepCoach from "@/components/SleepCoach";
+import DailyCheckin from "@/components/DailyCheckin";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -34,6 +35,8 @@ export default function Home() {
   const [newMemories, setNewMemories] = useState<string[]>([]);
   const [showMemoryView, setShowMemoryView] = useState(false);
   const [showSleepCoach, setShowSleepCoach] = useState(false);
+  const [showCheckin, setShowCheckin] = useState(false);
+  const [checkinDoneToday, setCheckinDoneToday] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -116,6 +119,15 @@ export default function Home() {
     const memRes = await fetch(`/api/memories?child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
     const memData = await memRes.json();
     if (memData.memories) setMemories(memData.memories);
+    // Check if daily check-in done today
+    const checkinRes = await fetch(`/api/checkin?child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
+    const checkinData = await checkinRes.json();
+    setCheckinDoneToday(checkinData.done_today);
+
+    // Show check-in prompt if not done today
+    if (!checkinData.done_today) {
+      setTimeout(() => setShowCheckin(true), 2000);
+    }
 
     // Only fetch vaccine data for Pro users
     if (isProUser) {
@@ -664,6 +676,17 @@ if (!res.ok) throw new Error("API error");
               </button>
             </div>
             <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>{getAge(profile.dob)}</div>
+            {profileSaved && !checkinDoneToday && (
+              <button
+                onClick={() => setShowCheckin(true)}
+                style={{ background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 99, padding: "2px 10px", fontSize: 11, fontWeight: 600, color: "#E07A5F", cursor: "pointer", marginTop: 2 }}
+              >
+                ✓ Daily check-in
+              </button>
+            )}
+            {profileSaved && checkinDoneToday && (
+              <span style={{ fontSize: 11, color: "#38A169", fontWeight: 600, marginTop: 2 }}>✓ Checked in</span>
+            )}
           </div>
         </div>
 
@@ -704,6 +727,7 @@ if (!res.ok) throw new Error("API error");
             isPro={isPro}
           />
         </div>
+        
       )}
       {/* Pro gate modal */}
       {showProModal && (
@@ -1013,6 +1037,16 @@ if (!res.ok) throw new Error("API error");
           childName={profile.name}
           childId={profile.child_id}
           onClose={() => setShowSleepCoach(false)}
+        />
+      )}
+
+      {/* Daily Check-in */}
+      {showCheckin && (
+        <DailyCheckin
+          childName={profile.name}
+          childId={profile.child_id}
+          onClose={() => setShowCheckin(false)}
+          onComplete={() => setCheckinDoneToday(true)}
         />
       )}
     </div>
