@@ -413,7 +413,7 @@ if (!res.ok) throw new Error("API error");
                 <div style={{ padding: "12px 14px", background: "#F9F9F9", border: "1px solid #EEEEEE", borderRadius: 12 }}>
                   <p style={{ margin: "0 0 4px", fontSize: 11, fontWeight: 700, color: "#999", textTransform: "uppercase", letterSpacing: 1 }}>ChatGPT would say:</p>
                   <p style={{ margin: 0, fontSize: 13, color: "#aaa", lineHeight: 1.5, fontStyle: "italic" }}>"It's generally normal for babies to occasionally skip meals..."</p>
-                  <p style={{ margin: "6px 0 0", fontSize: 11, color: "#ccc" }}>Generic. Doesn't know Emma. Doesn't know about the egg allergy.</p>
+                  <p style={{ margin: "6px 0 0", fontSize: 11, color: "#ccc" }}>Generic AI answers the question. AskNeer answers it in the context of your child.</p>
                 </div>
               </div>
             </div>
@@ -437,7 +437,8 @@ if (!res.ok) throw new Error("API error");
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
               { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it.", pro: false },
-              { emoji: "📖", title: "Growing platform", desc: "Sleep, growth, milestones, and a lifetime storybook - all coming soon.", pro: false },
+              { emoji: "🌙", title: "Tonight's Plan", desc: "Tell AskNeer how your child slept. Get a personalized bedtime plan for tonight.", pro: true },
+              { emoji: "📖", title: "Growing platform", desc: "Growth, milestones, and a lifetime storybook - all coming soon.", pro: false },
             ].map(f => (
               <div key={f.title} style={{ background: "#FFF9F5", borderRadius: 16, padding: "20px", border: "1px solid #F0EDED", position: "relative" }}>
                 {f.pro && <span style={{ position: "absolute", top: 14, right: 14, fontSize: 10, fontWeight: 700, background: "#FFF0E8", color: "#E07A5F", borderRadius: 4, padding: "2px 7px" }}>PRO</span>}
@@ -460,7 +461,6 @@ if (!res.ok) throw new Error("API error");
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 14 }}>
               {[
                 { emoji: "❤️", title: "Child Timeline", desc: "Every important moment, remembered forever.", hot: true },
-                { emoji: "🌙", title: "Sleep Coach", desc: "Tell AskNeer how your child slept. Get tonight's plan." },
                 { emoji: "🍼", title: "Feeding Journal", desc: "Never lose track of meals or first foods." },
                 { emoji: "📈", title: "Growth & Milestones", desc: "See how your child develops over time." },
               ].map((f: any) => (
@@ -521,7 +521,7 @@ if (!res.ok) throw new Error("API error");
                 <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 17, color: "#2D2D2D" }}>Pro</p>
                 <p style={{ margin: "0 0 16px", fontSize: 12, color: "#aaa" }}>For parents who want more</p>
                 <p style={{ margin: "0 0 20px", fontSize: 34, fontWeight: 800, color: "#E07A5F" }}>$4.99<span style={{ fontSize: 15, fontWeight: 400, color: "#aaa" }}>/mo</span></p>
-                {["Unlimited questions", "7-day free trial", "Vaccine tracker", "Sleep Coach (coming soon)", "Early access to all new features", "Everything in Free"].map(f => (
+                {["Unlimited questions", "7-day free trial", "Vaccine tracker", "Tonight's Plan (Sleep Coach)", "Early access to all new features", "Everything in Free"].map(f => (
                   <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
                     <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
                     <span style={{ fontSize: 13, color: "#555" }}>{f}</span>
@@ -884,7 +884,7 @@ if (!res.ok) throw new Error("API error");
                   onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
                   style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
+                  🌙 {isPro ? "Tonight's Plan" : "Unlock Tonight's Plan"}
                   {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
               </div>
@@ -974,7 +974,7 @@ if (!res.ok) throw new Error("API error");
                   onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
                   style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
+                  🌙 {isPro ? "Tonight's Plan" : "Unlock Tonight's Plan"}
                   {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
               </div>
