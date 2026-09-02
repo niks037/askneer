@@ -109,7 +109,7 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
             <div>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#2D2D2D' }}>
-                🌙 Tonight's Plan
+                🌙 Sleep Coach
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>
                 Tell me how {childName} slept. I'll suggest tonight's plan.
@@ -237,7 +237,7 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
             <div>
               <div style={{ background: 'white', borderRadius: 16, padding: 20, border: '1.5px solid #E07A5F', marginBottom: 12 }}>
                 <p style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#E07A5F', textTransform: 'uppercase', letterSpacing: 1 }}>
-                  🌙 Tonight's Plan for {childName}
+                    🌙 Sleep Coach — {childName}'s Plan
                 </p>
                 <p style={{ margin: 0, fontSize: 15, color: '#2D2D2D', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{plan}</p>
               </div>
