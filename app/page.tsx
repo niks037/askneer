@@ -884,7 +884,7 @@ if (!res.ok) throw new Error("API error");
                   onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
                   style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  🌙 {isPro ? "Tonight's Plan" : "Unlock Tonight's Plan"}
+                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
                   {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
               </div>
@@ -974,7 +974,7 @@ if (!res.ok) throw new Error("API error");
                   onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
                   style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  🌙 {isPro ? "Tonight's Plan" : "Unlock Tonight's Plan"}
+                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
                   {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
               </div>
