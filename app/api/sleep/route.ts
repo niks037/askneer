@@ -110,7 +110,7 @@ Give me:
   const plan = text?.text || "";
 
   // Save sleep log
-  await supabase.from("sleep_logs").insert([{
+  const { data: inserted } = await supabase.from("sleep_logs").insert([{
     email,
     child_name,
     child_id,
@@ -126,7 +126,7 @@ Give me:
     child_mood,
     plan_generated: plan,
     log_date: new Date().toISOString().split("T")[0]
-  }]);
+  }]).select();
 
   // Save sleep summary to memories
   const sleepMemory = `Sleep on ${new Date().toLocaleDateString()}: ${total_hours}h total, ${night_wakings} wakings, mood ${child_mood}`;
@@ -136,7 +136,7 @@ Give me:
     memory: sleepMemory
   }]);
 
-  return Response.json({ plan });
+  return Response.json({ plan, log_id: inserted?.[0]?.id });
 }
 
 export async function GET(req: Request) {
@@ -156,4 +156,30 @@ export async function GET(req: Request) {
     .limit(10);
 
   return Response.json({ logs: data || [] });
+}
+
+export async function PATCH(req: Request) {
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ ok: false }, { status: 401 });
+  const email = session.user.email;
+
+  const { log_id, outcome, outcome_notes } = await req.json();
+  if (!log_id) return Response.json({ ok: false });
+
+  // Verify ownership
+  const { data: log } = await supabase
+    .from("sleep_logs")
+    .select("id, child_name")
+    .eq("id", log_id)
+    .eq("email", email)
+    .single();
+
+  if (!log) return Response.json({ ok: false }, { status: 404 });
+
+  await supabase
+    .from("sleep_logs")
+    .update({ outcome, outcome_notes })
+    .eq("id", log_id);
+
+  return Response.json({ ok: true });
 }
