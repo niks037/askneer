@@ -872,22 +872,22 @@ if (!res.ok) throw new Error("API error");
           </div>
 
           {/* Feature buttons */}
-          <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button
-              onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
-              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
-            >
-              💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
-              {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
-            </button>
-            <button
-              onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
-              style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
-            >
-              🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
-              {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
-            </button>
-          </div>
+              <div style={{ marginBottom: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
+                  style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
+                  {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+                </button>
+                <button
+                  onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
+                  style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
+                  {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+                </button>
+              </div>
 
           <div style={{ width: "100%", maxWidth: 600, display: "flex", gap: 10, alignItems: "flex-end" }}>
             <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }}} rows={2} placeholder={`Ask about ${profile.name}...`} style={{ flex: 1, padding: "14px 16px", border: "2px solid #F0F0F0", borderRadius: 16, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
@@ -962,13 +962,20 @@ if (!res.ok) throw new Error("API error");
           {/* Bottom input */}
           <div style={{ background: "white", borderTop: "1px solid #F0F0F0", padding: "10px 16px 12px" }}>
             <div style={{ maxWidth: 800, margin: "0 auto" }}>
-              <div style={{ marginBottom: 8 }}>
+              <div style={{ marginBottom: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <button
                   onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
                   style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
                   💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
                   {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+                </button>
+                <button
+                  onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
+                  style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
+                  {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
               </div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
