@@ -5,6 +5,7 @@ import VaccineTracker from "@/components/VaccineTracker";
 import ChildSnapshot from "@/components/ChildSnapshot";
 import InstallPrompt from "@/components/InstallPrompt";
 import MemoryView from "@/components/MemoryView";
+import SleepCoach from "@/components/SleepCoach";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -32,6 +33,7 @@ export default function Home() {
   const [checkoutError, setCheckoutError] = useState("");
   const [newMemories, setNewMemories] = useState<string[]>([]);
   const [showMemoryView, setShowMemoryView] = useState(false);
+  const [showSleepCoach, setShowSleepCoach] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -867,6 +869,30 @@ if (!res.ok) throw new Error("API error");
                 {q}
               </button>
             ))}
+          </div>
+          <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
+              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
+            >
+              💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
+              {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+            </button>
+            <button
+              onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
+              style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
+            >
+              🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
+              {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+            </button>
+
+            {showSleepCoach && (
+              <SleepCoach
+                childName={profile.name}
+                childId={profile.child_id}
+                onClose={() => setShowSleepCoach(false)}
+              />
+            )}
           </div>
 
           <div style={{ marginBottom: 12 }}>
