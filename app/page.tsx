@@ -37,6 +37,7 @@ export default function Home() {
   const [showSleepCoach, setShowSleepCoach] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinDoneToday, setCheckinDoneToday] = useState(false);
+  const [consentChecked, setConsentChecked] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -502,7 +503,7 @@ export default function Home() {
               { emoji: "💉", title: "Vaccine tracker", desc: "Auto-calculates your child's complete vaccine schedule from date of birth.", pro: true },
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
-              { emoji: "🔒", title: "Private and secure", desc: "Your child's data is private. We don't sell it or use it for advertising. We only share it with trusted providers needed to run AskNeer.", pro: false },
+              { emoji: "🔒", title: "Private and secure", desc: "Your child's data is private. We never sell it or use it for advertising. Only trusted providers needed to run AskNeer ever process it.", pro: false },
               { emoji: "🌙", title: "Tonight's Plan", desc: "Tell AskNeer how your child slept. Get a personalized bedtime plan for tonight.", pro: true },
               { emoji: "📖", title: "Growing platform", desc: "Growth, milestones, and a lifetime storybook - all coming soon.", pro: false },
             ].map(f => (
@@ -667,12 +668,31 @@ export default function Home() {
               onFocus={e => e.target.style.borderColor = "#E07A5F"}
               onBlur={e => e.target.style.borderColor = "#F0F0F0"} />
           </label>
+          {/* Privacy note under notes field */}
+          <div style={{ background: "#F8F8F8", borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 12, color: "#888", display: "flex", alignItems: "flex-start", gap: 8 }}>
+            <span>🔒</span>
+            <span>Your child's information personalizes AskNeer's responses. We don't sell it or use it for advertising. <a href="/privacy" style={{ color: "#E07A5F" }}>How we handle your child's data →</a></span>
+          </div>
+
+          {/* Consent checkbox */}
+          <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 16, cursor: "pointer" }}>
+            <input
+              type="checkbox"
+              checked={consentChecked}
+              onChange={e => setConsentChecked(e.target.checked)}
+              style={{ marginTop: 3, flexShrink: 0, accentColor: "#E07A5F", width: 16, height: 16 }}
+            />
+            <span style={{ fontSize: 13, color: "#555", lineHeight: 1.5 }}>
+              I am 18 or older and the parent or legal guardian of this child. I understand that AskNeer will use the information I provide to personalize its responses.
+            </span>
+          </label>
+
           {profileError && (
             <div style={{ background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13, color: "#993C1D" }}>
               {profileError}
             </div>
           )}
-          <button onClick={saveProfile} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+          <button onClick={saveProfile} disabled={!consentChecked} style={{ width: "100%", padding: "14px", background: "#E07A5F", color: "white", border: "none", borderRadius: 12, fontSize: 16, fontWeight: 700, cursor: !consentChecked ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: !consentChecked ? 0.6 : 1 }}>
             Start Chatting
           </button>
         </div>
