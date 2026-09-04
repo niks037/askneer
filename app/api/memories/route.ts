@@ -33,6 +33,8 @@ Return a JSON object with two arrays:
 Rules:
 - Extract only important, long-term facts: allergies, milestones, health events, medications, daycare/school, sleep issues, feeding preferences, behavioral patterns, developmental concerns, family context
 - Keep each fact under 6 words when possible (e.g. "Takes swimming lessons" not "Started swimming lessons at age 4 years 3 months")
+- NEVER extract age as a memory (e.g. "2 months old", "4 years old") - age is calculated from date of birth automatically
+- NEVER extract generic statements like "is a baby" or "is a toddler"
 - If parent corrects something (e.g. "she is NOT allergic"), add the correction to "add" and the old fact keyword to "remove"
 - If nothing important found, return {"add": [], "remove": []}
 Example:

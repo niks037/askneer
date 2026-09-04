@@ -446,6 +446,9 @@ export default function Home() {
           <p style={{ marginTop: 28, fontSize: 15, color: "#555", lineHeight: 1.7 }}>
             AskNeer doesn't give generic answers. It knows <strong style={{ color: "#2D2D2D" }}>your child</strong> - their age, history, allergies, milestones.
           </p>
+          <p style={{ marginTop: 12, fontSize: 12, color: "#aaa", fontStyle: "italic" }}>
+            General parenting guidance only — not diagnosis or emergency medical care. For urgent symptoms, contact a healthcare professional immediately.
+          </p>
         </div>
 
         {/* Meet Emma demo */}
@@ -518,7 +521,7 @@ export default function Home() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
             {[
               { emoji: "🧠", title: "Remembers what matters", desc: "Tell AskNeer about allergies, milestones, or sleep once. Every answer builds on what you've shared.", pro: false },
-              { emoji: "💉", title: "Vaccine tracker", desc: "Auto-calculates your child's complete vaccine schedule from date of birth.", pro: true },
+              { emoji: "💉", title: "Vaccine tracker", desc: "Personalized vaccine schedule guidance based on your child's age. Always confirm with your pediatrician or local health authority.", pro: true },
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
               { emoji: "🔒", title: "Private and secure", desc: "Your child's data is private. We never sell it or use it for advertising. Only trusted providers needed to run AskNeer ever process it.", pro: false },
