@@ -53,7 +53,11 @@ We do not sell your data. We do not use your data for advertising. We do not sha
           title: "4. Children's data",
           content: `AskNeer is designed for use by parents and guardians aged 18 and over. By creating a child profile, you confirm that you are the parent or legal guardian of the child whose information you are entering, and that you consent to us storing that child's information to provide the service.
 
-We store child profile data (name, date of birth, health notes) solely to personalize our AI responses. This data is never shared with third parties, never used for advertising, and never used for behavioral profiling.
+We store child profile data (name, date of birth, health notes) solely to personalize our AI responses. We do not sell your child's personal information or share 
+it with third parties for advertising or their own 
+independent purposes. We use carefully selected service 
+providers - including our AI, hosting, and database 
+providers - solely as necessary to operate AskNeer., never used for advertising, and never used for behavioral profiling.
 
 You can request deletion of all child data at any time by emailing info@askneer.com.`
         },

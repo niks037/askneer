@@ -502,7 +502,7 @@ export default function Home() {
               { emoji: "💉", title: "Vaccine tracker", desc: "Auto-calculates your child's complete vaccine schedule from date of birth.", pro: true },
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
-              { emoji: "🔒", title: "Private and secure", desc: "Your child's data is yours. We never share it, never sell it.", pro: false },
+              { emoji: "🔒", title: "Private and secure", desc: "Your child's data is private. We don't sell it or use it for advertising. We only share it with trusted providers needed to run AskNeer.", pro: false },
               { emoji: "🌙", title: "Tonight's Plan", desc: "Tell AskNeer how your child slept. Get a personalized bedtime plan for tonight.", pro: true },
               { emoji: "📖", title: "Growing platform", desc: "Growth, milestones, and a lifetime storybook - all coming soon.", pro: false },
             ].map(f => (
@@ -677,6 +677,18 @@ export default function Home() {
       </div>
     </div>
   );
+
+  <button
+  onClick={async () => {
+    if (confirm("Are you sure? This will permanently delete your account, child profile, chat history, memories, and vaccine records. This cannot be undone.")) {
+      await fetch("/api/account", { method: "DELETE" });
+      signOut();
+    }
+  }}
+  style={{ background: "none", border: "none", color: "#ddd", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}
+>
+  Delete account
+</button>
 
   // ─── Main chat screen ────────────────────────────────────────────
   return (
@@ -1094,3 +1106,4 @@ export default function Home() {
     </div>
   );
 }
+<a href="/subprocessors" style={{ color: "#E07A5F", textDecoration: "none" }}>Subprocessors</a>
