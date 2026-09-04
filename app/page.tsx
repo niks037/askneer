@@ -44,20 +44,18 @@ export default function Home() {
     if (params.get("upgraded") === "true") {
       window.history.replaceState({}, "", "/");
       setShowUpgradeSuccess(true);
-      // Poll for Pro status - webhook may take a few seconds to fire
       let attempts = 0;
       pollRef.current = setInterval(async () => {
         attempts++;
         await loadProfile();
         if (attempts >= 8) {
           if (pollRef.current) clearInterval(pollRef.current);
-          setShowUpgradeSuccess(false); // hide banner if Pro not confirmed
+          setShowUpgradeSuccess(false);
         }
       }, 3000);
     }
   }, []);
 
-  // Stop polling once isPro is confirmed
   useEffect(() => {
     if (isPro && pollRef.current) {
       clearInterval(pollRef.current);
@@ -119,17 +117,15 @@ export default function Home() {
     const memRes = await fetch(`/api/memories?child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
     const memData = await memRes.json();
     if (memData.memories) setMemories(memData.memories);
-    // Check if daily check-in done today
     const checkinRes = await fetch(`/api/checkin?child_name=${encodeURIComponent(data.profile?.child_name || '')}`);
     const checkinData = await checkinRes.json();
     setCheckinDoneToday(checkinData.done_today);
-
-    // Show check-in prompt if not done today
     if (!checkinData.done_today) {
-      setTimeout(() => setShowCheckin(true), 2000);
+      const skippedToday = localStorage.getItem(`askneer_checkin_skipped_${new Date().toDateString()}`);
+      if (!skippedToday) {
+        setTimeout(() => setShowCheckin(true), 2000);
+      }
     }
-
-    // Only fetch vaccine data for Pro users
     if (isProUser) {
       const vacRes = await fetch(`/api/vaccines?child_name=${encodeURIComponent(data.profile?.child_name || '')}&dob=${data.profile?.child_dob || ''}`);
       const vacData = await vacRes.json();
@@ -184,14 +180,14 @@ export default function Home() {
   }
 
   function saveProfile() {
-  if (!profile.name || !profile.dob) {
-    setProfileError("Please enter your child's name and date of birth.");
-    return;
+    if (!profile.name || !profile.dob) {
+      setProfileError("Please enter your child's name and date of birth.");
+      return;
+    }
+    setProfileError("");
+    saveProfileToDB(profile);
+    setProfileSaved(true);
   }
-  setProfileError("");
-  saveProfileToDB(profile);
-  setProfileSaved(true);
-}
 
   async function ask() {
     if (!input.trim()) return;
@@ -221,25 +217,25 @@ export default function Home() {
         body: JSON.stringify({ message: input, history: updatedMessages })
       });
       if (res.status === 403) {
-  const data = await res.json();
-  if (data.error === "limit_reached") {
-    setProModalReason('questions');
-    setShowProModal(true);
-    setMessages(updatedMessages.slice(0, -1)); // remove the user message
-    setInput(input); // restore input
-    setChatLoading(false);
-    return;
-  }
-  throw new Error("API error");
-}
-if (!res.ok) throw new Error("API error");
+        const data = await res.json();
+        if (data.error === "limit_reached") {
+          setProModalReason('questions');
+          setShowProModal(true);
+          setMessages(updatedMessages.slice(0, -1));
+          setInput(input);
+          setChatLoading(false);
+          return;
+        }
+        throw new Error("API error");
+      }
+      if (!res.ok) throw new Error("API error");
       const data = await res.json();
       if (!data.reply) throw new Error("No reply");
       setMessages([...updatedMessages, { role: "assistant", content: data.reply }]);
     } catch (error) {
-      setMessages([...updatedMessages, { 
-        role: "assistant", 
-        content: "Something went wrong - your question wasn't lost. Please try again." 
+      setMessages([...updatedMessages, {
+        role: "assistant",
+        content: "Something went wrong - your question wasn't lost. Please try again."
       }]);
     } finally {
       setChatLoading(false);
@@ -251,11 +247,9 @@ if (!res.ok) throw new Error("API error");
         const memData = await memRes.json();
         if (memData.memories) {
           setMemories(memData.memories);
-          // Find newly added memories
           const added = memData.memories.filter((m: string) => !previousMemories.has(m));
           if (added.length > 0) {
             setNewMemories(added);
-            // Auto-hide after 6 seconds
             setTimeout(() => setNewMemories([]), 6000);
           }
         }
@@ -265,41 +259,41 @@ if (!res.ok) throw new Error("API error");
 
   // ─── Login screen ───────────────────────────────────────────────
   if (!session) return (
-    <div style={{ background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ background: "#FFF9F5", fontFamily: "'Segoe UI', sans-serif", minHeight: "100vh" }}>
 
-      {/* Single screen hero - exactly one viewport height */}
-      <div style={{ height: "100vh", display: "flex", flexDirection: "column", padding: "16px 24px" }}>
-
-        {/* Nav */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ background: "#E07A5F", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 15 }}>N</div>
-            <span style={{ fontWeight: 800, fontSize: 20, color: "#2D2D2D" }}>AskNeer</span>
-          </div>
-          <span style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600, background: "#FFF0E8", padding: "4px 12px", borderRadius: 99 }}>By NeernMom</span>
+      {/* Nav */}
+      <div style={{ padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(224,122,95,0.12)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ background: "#E07A5F", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 16, flexShrink: 0 }}>N</div>
+          <span style={{ fontWeight: 800, fontSize: 20, color: "#2D2D2D", letterSpacing: -0.5 }}>AskNeer</span>
+          <div style={{ width: 1, height: 18, background: "#E0D8D4", margin: "0 4px" }} />
+          <span style={{ fontSize: 13, color: "#999", fontStyle: "italic" }}>Parenting advice that knows your child.</span>
         </div>
+        <span style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600, background: "#FFF0E8", padding: "4px 14px", borderRadius: 99, border: "1px solid rgba(224,122,95,0.2)" }}>By NeernMom</span>
+      </div>
 
-        {/* Centered content */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+      {/* Hero - two column */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "72px 32px 48px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 64, alignItems: "center" }}>
 
-          <div style={{ width: 60, height: 60, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
+        {/* Left — headline and CTA */}
+        <div>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#FFF0E8", border: "1px solid rgba(224,122,95,0.25)", borderRadius: 99, padding: "5px 14px", marginBottom: 24 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#E07A5F" }} />
+            <span style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>From the NeernMom team</span>
           </div>
 
-          <h1 style={{ fontSize: "clamp(28px, 7vw, 52px)", fontWeight: 800, color: "#2D2D2D", margin: "0 0 14px", lineHeight: 1.15, letterSpacing: -1 }}>
-            Every question.<br />
-            Every milestone.<br />
-            <span style={{ color: "#E07A5F" }}>Every stage.</span>
+          <h1 style={{ fontSize: "clamp(32px, 5vw, 54px)", fontWeight: 800, color: "#1A1A1A", margin: "0 0 20px", lineHeight: 1.1, letterSpacing: -1.5 }}>
+            Your baby isn't<br />
+            generic.<br />
+            <span style={{ color: "#E07A5F" }}>Neither is our advice.</span>
           </h1>
 
-          <p style={{ fontSize: 16, color: "#666", lineHeight: 1.7, margin: "0 0 28px", maxWidth: 380 }}>
-            Parenting advice that starts with your child. AskNeer remembers what matters - so you don't have to explain everything again.
+          <p style={{ fontSize: 17, color: "#666", lineHeight: 1.75, margin: "0 0 36px", maxWidth: 440 }}>
+            Tell AskNeer about your child once — their age, allergies, sleep patterns. Every answer from that moment is built around <em>your</em> baby. Not some average one.
           </p>
 
-          <div style={{ width: "100%", maxWidth: 380 }}>
-            <button onClick={() => signIn("google")} style={{ width: "100%", padding: "16px 24px", background: "#E07A5F", color: "white", border: "none", borderRadius: 16, fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 400 }}>
+            <button onClick={() => signIn("google")} style={{ width: "100%", padding: "16px 24px", background: "#E07A5F", color: "white", border: "none", borderRadius: 14, fontSize: 16, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}
               onMouseOver={e => (e.currentTarget.style.background = "#D06A4F")}
               onMouseOut={e => (e.currentTarget.style.background = "#E07A5F")}>
               <svg width="20" height="20" viewBox="0 0 24 24">
@@ -310,38 +304,98 @@ if (!res.ok) throw new Error("API error");
               </svg>
               Start free with Google
             </button>
-            <p style={{ color: "#bbb", fontSize: 12, textAlign: "center", marginTop: 8 }}>No credit card required · 3 free questions daily</p>
+            <p style={{ color: "#bbb", fontSize: 12, textAlign: "center", margin: 0 }}>No credit card · 3 free questions daily · Cancel anytime</p>
           </div>
 
-          <div style={{ marginTop: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <div style={{ display: "flex", gap: 24, justifyContent: "center" }}>
+          <div style={{ display: "flex", gap: 32, marginTop: 40 }}>
+            {[
+              { number: "120K", label: "NeernMom parents" },
+              { number: "Free", label: "to get started" },
+              { number: "24/7", label: "always available" },
+            ].map(s => (
+              <div key={s.label}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: "#2D2D2D" }}>{s.number}</div>
+                <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right — live product demo */}
+        <div style={{ position: "relative" }}>
+          <div style={{ background: "white", borderRadius: 24, border: "1px solid rgba(224,122,95,0.15)", overflow: "hidden", boxShadow: "0 24px 64px rgba(224,122,95,0.12)" }}>
+
+            {/* Child profile header */}
+            <div style={{ background: "#FFF9F5", padding: "16px 20px", borderBottom: "1px solid rgba(224,122,95,0.1)", display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ background: "#E07A5F", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 18 }}>E</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D" }}>Emma</div>
+                <div style={{ fontSize: 12, color: "#E07A5F", fontWeight: 600 }}>8 months old</div>
+              </div>
+              <div style={{ marginLeft: "auto", background: "#E07A5F", color: "white", fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "3px 8px" }}>AskNeer knows</div>
+            </div>
+
+            {/* Memory chips */}
+            <div style={{ padding: "12px 20px", borderBottom: "1px solid rgba(224,122,95,0.08)", display: "flex", gap: 8, flexWrap: "wrap" }}>
               {[
-                { number: "120K", label: "NeernMom parents" },
-                { number: "Free", label: "to get started" },
-                { number: "24/7", label: "always there" },
-              ].map(s => (
-                <div key={s.label} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: "#2D2D2D" }}>{s.number}</div>
-                  <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>{s.label}</div>
+                { icon: "⚠️", text: "Egg allergy" },
+                { icon: "🍼", text: "Started solids" },
+                { icon: "🌙", text: "Wakes twice at night" },
+              ].map(chip => (
+                <div key={chip.text} style={{ display: "flex", alignItems: "center", gap: 5, background: "#FFF0E8", borderRadius: 20, padding: "4px 10px", border: "1px solid rgba(224,122,95,0.15)" }}>
+                  <span style={{ fontSize: 11 }}>{chip.icon}</span>
+                  <span style={{ fontSize: 11, color: "#E07A5F", fontWeight: 600 }}>{chip.text}</span>
                 </div>
               ))}
             </div>
-            <button
-              onClick={() => {
-                const fp = document.getElementById('full-page');
-                if (fp) {
-                  fp.style.display = 'block';
-                  setTimeout(() => fp.scrollIntoView({ behavior: 'smooth' }), 50);
-                }
-              }}
-              style={{ background: "none", border: "none", color: "#E07A5F", fontSize: 13, cursor: "pointer", textDecoration: "underline", padding: 0 }}>
-              See how it works
-            </button>
+
+            {/* Chat */}
+            <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ background: "#E07A5F", color: "white", padding: "10px 14px", borderRadius: "16px 16px 4px 16px", maxWidth: "80%", fontSize: 13, lineHeight: 1.5 }}>
+                  Emma skipped breakfast today. Should I be worried?
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                <div style={{ background: "#E07A5F", borderRadius: "50%", width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>N</div>
+                <div style={{ background: "#F8F8F8", padding: "10px 14px", borderRadius: "4px 16px 16px 16px", fontSize: 13, color: "#2D2D2D", lineHeight: 1.6, border: "1px solid #F0EDED" }}>
+                  Since Emma only started solids <strong>3 weeks ago</strong>, skipping a meal is completely normal. Given her <strong>egg allergy</strong>, watch any new foods this week.
+                  <div style={{ marginTop: 8, padding: "5px 10px", background: "#FFF0E8", borderRadius: 6, fontSize: 10, color: "#E07A5F", fontWeight: 600 }}>
+                    Based on Emma's profile — not a generic answer
+                  </div>
+                </div>
+              </div>
+              <div style={{ background: "#F8F8F8", borderRadius: 12, padding: "10px 14px", border: "1px solid #F0EDED", display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
+                <span style={{ fontSize: 12, color: "#ccc" }}>Ask about Emma...</span>
+                <div style={{ background: "#E07A5F", borderRadius: 8, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 14 }}>↑</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating badge */}
+          <div style={{ position: "absolute", top: -12, right: 20, background: "#2D2D2D", color: "white", borderRadius: 99, padding: "6px 14px", fontSize: 11, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#38A169" }} />
+            Knows your child
           </div>
         </div>
       </div>
 
-      {/* Full page - hidden by default, shown when See how it works is clicked */}
+      {/* See how it works */}
+      <div style={{ textAlign: "center", paddingBottom: 48 }}>
+        <button
+          onClick={() => {
+            const fp = document.getElementById('full-page');
+            if (fp) {
+              fp.style.display = 'block';
+              setTimeout(() => fp.scrollIntoView({ behavior: 'smooth' }), 50);
+            }
+          }}
+          style={{ background: "none", border: "none", color: "#E07A5F", fontSize: 13, cursor: "pointer", textDecoration: "underline", padding: 0 }}>
+          See how it works ↓
+        </button>
+      </div>
+
+      {/* Full page - hidden by default */}
       <div id="full-page" style={{ display: "none" }}>
 
         {/* Social proof */}
@@ -661,10 +715,7 @@ if (!res.ok) throw new Error("API error");
               profile.name?.[0]?.toUpperCase() || "N"
             )}
           </div>
-          <div
-            onClick={() => {}}
-            style={{ cursor: "default" }}
-          >
+          <div onClick={() => {}} style={{ cursor: "default" }}>
             <div style={{ fontWeight: 700, fontSize: 15, color: "#2D2D2D", display: "flex", alignItems: "center", gap: 6 }}>
               {profile.name}
               <button
@@ -727,8 +778,8 @@ if (!res.ok) throw new Error("API error");
             isPro={isPro}
           />
         </div>
-        
       )}
+
       {/* Pro gate modal */}
       {showProModal && (
         <div onClick={() => setShowProModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -751,8 +802,13 @@ if (!res.ok) throw new Error("API error");
                   ))}
                 </div>
               )}
-              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking, add multiple children, and get unlimited questions - all personalized to your child."}
+              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking and get unlimited questions - all personalized to your child."}
             </p>
+            {checkoutError && (
+              <div style={{ background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13, color: "#993C1D" }}>
+                {checkoutError}
+              </div>
+            )}
             <button onClick={async () => {
               setCheckoutError("");
               const res = await fetch("/api/dodo/checkout", {
@@ -896,22 +952,22 @@ if (!res.ok) throw new Error("API error");
           </div>
 
           {/* Feature buttons */}
-              <div style={{ marginBottom: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button
-                  onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
-                  style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
-                >
-                  💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
-                  {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
-                </button>
-                <button
-                  onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
-                  style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "8px 18px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
-                >
-                  🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
-                  {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
-                </button>
-              </div>
+          <div style={{ marginBottom: 16, display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+            <button
+              onClick={() => isPro ? setShowVaccines(true) : (() => { setProModalReason('vaccine'); setShowProModal(true); })()}
+              style={{ background: "#FFF0E8", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#E07A5F", display: "inline-flex", alignItems: "center", gap: 6 }}
+            >
+              💉 {isPro ? "Vaccine Schedule" : "Unlock Vaccine Tracker"}
+              {!isPro && <span style={{ fontSize: 10, background: "#E07A5F", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+            </button>
+            <button
+              onClick={() => isPro ? setShowSleepCoach(true) : (() => { setProModalReason('questions'); setShowProModal(true); })()}
+              style={{ background: "#F0F4FF", border: "none", borderRadius: 20, padding: "10px 20px", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#5B6EE8", display: "inline-flex", alignItems: "center", gap: 6 }}
+            >
+              🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
+              {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
+            </button>
+          </div>
 
           <div style={{ width: "100%", maxWidth: 600, display: "flex", gap: 10, alignItems: "flex-end" }}>
             <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }}} rows={2} placeholder={`Ask about ${profile.name}...`} style={{ flex: 1, padding: "14px 16px", border: "2px solid #F0F0F0", borderRadius: 16, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
@@ -937,37 +993,21 @@ if (!res.ok) throw new Error("API error");
                   </div>
                 </div>
               ))}
+
               {/* Memory confirmation toast */}
               {newMemories.length > 0 && (
-                <div style={{
-                  display: "flex", alignItems: "flex-start", gap: 10,
-                  marginBottom: 12, animation: "fadeIn 0.3s ease"
-                }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: "50%",
-                    background: "#F0FFF4", border: "1px solid #9AE6B4",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 14, flexShrink: 0
-                  }}>🧠</div>
-                  <div style={{
-                    background: "#F0FFF4", border: "1px solid #9AE6B4",
-                    borderRadius: "4px 18px 18px 18px",
-                    padding: "10px 14px", maxWidth: "72%"
-                  }}>
-                    <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 700, color: "#276749" }}>
-                      Remembered
-                    </p>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12, animation: "fadeIn 0.3s ease" }}>
+                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#F0FFF4", border: "1px solid #9AE6B4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🧠</div>
+                  <div style={{ background: "#F0FFF4", border: "1px solid #9AE6B4", borderRadius: "4px 18px 18px 18px", padding: "10px 14px", maxWidth: "72%" }}>
+                    <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 700, color: "#276749" }}>Remembered</p>
                     {newMemories.map((m, i) => (
-                      <p key={i} style={{ margin: "2px 0", fontSize: 13, color: "#2D6A4F" }}>
-                        {m}
-                      </p>
+                      <p key={i} style={{ margin: "2px 0", fontSize: 13, color: "#2D6A4F" }}>{m}</p>
                     ))}
-                    <p style={{ margin: "6px 0 0", fontSize: 11, color: "#68D391" }}>
-                      You can ask me about this anytime.
-                    </p>
+                    <p style={{ margin: "6px 0 0", fontSize: 11, color: "#68D391" }}>You can ask me about this anytime.</p>
                   </div>
                 </div>
               )}
+
               {chatLoading && (
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                   <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#E07A5F", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: 14 }}>
@@ -1013,7 +1053,7 @@ if (!res.ok) throw new Error("API error");
         </>
       )}
 
-      {/* Vaccine Tracker fullscreen */}
+      {/* Vaccine Tracker */}
       {showVaccines && (
         <VaccineTracker
           email={session?.user?.email || ''}
@@ -1022,6 +1062,7 @@ if (!res.ok) throw new Error("API error");
           onClose={() => setShowVaccines(false)}
         />
       )}
+
       {/* Memory View */}
       {showMemoryView && (
         <MemoryView
@@ -1031,7 +1072,8 @@ if (!res.ok) throw new Error("API error");
           onDelete={deleteMemory}
         />
       )}
-            {/* Sleep Coach */}
+
+      {/* Sleep Coach */}
       {showSleepCoach && (
         <SleepCoach
           childName={profile.name}
