@@ -26,7 +26,7 @@ export default function Home() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editProfile, setEditProfile] = useState({ name: "", dob: "", notes: "" });
   const [avatarHovered, setAvatarHovered] = useState(false);
-  const [memories, setMemories] = useState<string[]>([]);
+  const [memories, setMemories] = useState<{memory: string, source?: string}[]>([]);
   const [nextVaccine, setNextVaccine] = useState<{name: string, due_date: string} | null>(null);
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
@@ -38,6 +38,7 @@ export default function Home() {
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinDoneToday, setCheckinDoneToday] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
+
 
   useEffect(() => {
     setMounted(true);
@@ -177,7 +178,24 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ child_name: profile.name, memory_text: memory })
     });
-    setMemories(prev => prev.filter(m => m !== memory));
+    setMemories(prev => prev.filter(m => m.memory !== memory));
+  }
+  
+  async function confirmMemory(oldMemory: string, newMemory?: string) {
+    await fetch("/api/memories", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        child_name: profile.name,
+        old_memory: oldMemory,
+        new_memory: newMemory || oldMemory
+      })
+    });
+    setMemories(prev => prev.map(m =>
+      m.memory === oldMemory
+        ? { memory: newMemory || oldMemory, source: 'parent' }
+        : m
+    ));
   }
 
   function saveProfile() {
@@ -241,16 +259,16 @@ export default function Home() {
     } finally {
       setChatLoading(false);
     }
-    const previousMemories = new Set(memories);
+    const previousMemories = new Set(memories.map(m => m.memory));
     [8000, 16000].forEach(delay => {
       setTimeout(async () => {
         const memRes = await fetch(`/api/memories?child_name=${encodeURIComponent(profile.name)}`);
         const memData = await memRes.json();
         if (memData.memories) {
           setMemories(memData.memories);
-          const added = memData.memories.filter((m: string) => !previousMemories.has(m));
+          const added = memData.memories.filter((m: any) => !previousMemories.has(m.memory));
           if (added.length > 0) {
-            setNewMemories(added);
+            setNewMemories(added.map((m: any) => m.memory));
             setTimeout(() => setNewMemories([]), 6000);
           }
         }
@@ -806,7 +824,7 @@ export default function Home() {
           <ChildSnapshot
             name={profile.name}
             dob={profile.dob}
-            memories={memories}
+            memories={memories.map(m => m.memory)}
             nextVaccine={nextVaccine}
             getAge={getAge}
             isPro={isPro}
@@ -1104,6 +1122,7 @@ export default function Home() {
           memories={memories}
           onClose={() => setShowMemoryView(false)}
           onDelete={deleteMemory}
+          onConfirm={confirmMemory}
         />
       )}
 

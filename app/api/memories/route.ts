@@ -106,7 +106,7 @@ export async function GET(req: Request) {
 
   let query = supabase
     .from("memories")
-    .select("memory")
+    .select("memory, source")
     .eq("email", email)
     .order("created_at", { ascending: true });
 
@@ -115,7 +115,28 @@ export async function GET(req: Request) {
   }
 
   const { data } = await query;
-  return Response.json({ memories: (data || []).map((r) => r.memory) });
+  return Response.json({ memories: (data || []).map((r) => ({ memory: r.memory, source: r.source || 'ai' })) });
+}
+
+export async function PATCH(req: Request) {
+  const session = await auth();
+  if (!session?.user?.email) return Response.json({ ok: false }, { status: 401 });
+  const email = session.user.email;
+
+  const { child_name, old_memory, new_memory } = await req.json();
+  if (!old_memory) return Response.json({ ok: false });
+
+  await supabase
+    .from("memories")
+    .update({ 
+      memory: new_memory || old_memory,
+      source: 'parent'
+    })
+    .eq("email", email)
+    .eq("child_name", child_name)
+    .ilike("memory", `%${old_memory}%`);
+
+  return Response.json({ ok: true });
 }
 
 export async function DELETE(req: Request) {
