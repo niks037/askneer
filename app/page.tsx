@@ -624,6 +624,8 @@ export default function Home() {
             {" · "}
             <a href="/terms" style={{ color: "#E07A5F", textDecoration: "none" }}>Terms</a>
             {" · "}
+            <a href="/subprocessors" style={{ color: "#E07A5F", textDecoration: "none" }}>Subprocessors</a>
+            {" · "}
             <span style={{ color: "#E07A5F" }}>Not a medical service</span>
           </p>
         </div>
