@@ -275,7 +275,7 @@ export default function Home() {
       {/* Hero - two column */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "72px 32px 48px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 64, alignItems: "center" }}>
 
-        {/* Left — headline and CTA */}
+        {/* Left - headline and CTA */}
         <div>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#FFF0E8", border: "1px solid rgba(224,122,95,0.25)", borderRadius: 99, padding: "5px 14px", marginBottom: 24 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#E07A5F" }} />
@@ -289,7 +289,7 @@ export default function Home() {
           </h1>
 
           <p style={{ fontSize: 17, color: "#666", lineHeight: 1.75, margin: "0 0 36px", maxWidth: 440 }}>
-            Tell AskNeer about your child once — their age, allergies, sleep patterns. Every answer from that moment is built around <em>your</em> baby. Not some average one.
+            Tell AskNeer about your child once - their age, allergies, sleep patterns. Every answer from that moment is built around <em>your</em> baby. Not some average one.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 400 }}>
@@ -321,7 +321,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Right — live product demo */}
+        {/* Right - live product demo */}
         <div style={{ position: "relative" }}>
           <div style={{ background: "white", borderRadius: 24, border: "1px solid rgba(224,122,95,0.15)", overflow: "hidden", boxShadow: "0 24px 64px rgba(224,122,95,0.12)" }}>
 
@@ -361,7 +361,7 @@ export default function Home() {
                 <div style={{ background: "#F8F8F8", padding: "10px 14px", borderRadius: "4px 16px 16px 16px", fontSize: 13, color: "#2D2D2D", lineHeight: 1.6, border: "1px solid #F0EDED" }}>
                   Since Emma only started solids <strong>3 weeks ago</strong>, skipping a meal is completely normal. Given her <strong>egg allergy</strong>, watch any new foods this week.
                   <div style={{ marginTop: 8, padding: "5px 10px", background: "#FFF0E8", borderRadius: 6, fontSize: 10, color: "#E07A5F", fontWeight: 600 }}>
-                    Based on Emma's profile — not a generic answer
+                    Based on Emma's profile - not a generic answer
                   </div>
                 </div>
               </div>
