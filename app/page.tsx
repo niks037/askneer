@@ -1150,4 +1150,3 @@ export default function Home() {
     </div>
   );
 }
-<a href="/subprocessors" style={{ color: "#E07A5F", textDecoration: "none" }}>Subprocessors</a>
