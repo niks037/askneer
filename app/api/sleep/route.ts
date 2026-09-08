@@ -162,12 +162,15 @@ Give me:
     log_date: new Date().toISOString().split("T")[0]
   }]).select();
 
-  // Save sleep summary to memories
+  // Save sleep summary to memories — tagged as 'sleep_log' so it still
+  // personalizes chat answers, but doesn't clutter the parent's "What Neer Knows"
+  // review screen with routine nightly data that isn't a fact needing confirmation
   const sleepMemory = `Sleep on ${new Date().toLocaleDateString()}: ${total_hours}h total, ${night_wakings} wakings, mood ${child_mood}`;
   await supabase.from("memories").insert([{
     email,
     child_name,
-    memory: sleepMemory
+    memory: sleepMemory,
+    source: 'sleep_log'
   }]);
 
   return Response.json({

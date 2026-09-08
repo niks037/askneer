@@ -59,12 +59,14 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
   // Calculate total sleep hours from bedtime and wake time
   function calcTotalHours(bedtime: string, wakeTime: string): number | null {
     if (!bedtime || !wakeTime) return null
+    if (bedtime === wakeTime) return null // identical times can't represent a real sleep stretch
     const [bh, bm] = bedtime.split(':').map(Number)
     const [wh, wm] = wakeTime.split(':').map(Number)
     let bedMins = bh * 60 + bm
     let wakeMins = wh * 60 + wm
     if (wakeMins <= bedMins) wakeMins += 24 * 60 // next day
-    return Math.round((wakeMins - bedMins) / 6) / 10
+    const hours = Math.round((wakeMins - bedMins) / 6) / 10
+    return hours > 16 ? null : hours // cap: no realistic single sleep stretch exceeds ~16h
   }
 
   useEffect(() => {
@@ -159,6 +161,10 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
       setValidationError("Please enter both bedtime and morning wake-up time — these are needed to build tonight's plan.")
       return
     }
+    if (calcTotalHours(form.bedtime, form.wake_time) === null) {
+      setValidationError("Those times don't add up to a realistic night's sleep — please double-check bedtime and wake-up time.")
+      return
+    }
     setValidationError('')
     setStep('loading')
     const total_hours = calcTotalHours(form.bedtime, form.wake_time)
@@ -247,9 +253,15 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
                   </label>
                 </div>
                 {form.bedtime && form.wake_time && (
-                  <p style={{ margin: '8px 0 0', fontSize: 12, color: '#888' }}>
-                    Total sleep: <strong style={{ color: '#2D2D2D' }}>{calcTotalHours(form.bedtime, form.wake_time)}h</strong>
-                  </p>
+                  calcTotalHours(form.bedtime, form.wake_time) !== null ? (
+                    <p style={{ margin: '8px 0 0', fontSize: 12, color: '#888' }}>
+                      Total sleep: <strong style={{ color: '#2D2D2D' }}>{calcTotalHours(form.bedtime, form.wake_time)}h</strong>
+                    </p>
+                  ) : (
+                    <p style={{ margin: '8px 0 0', fontSize: 12, color: '#C0392B', fontWeight: 600 }}>
+                      ⚠️ Please double-check these times — they don't add up to a realistic night's sleep.
+                    </p>
+                  )
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
                   <label>

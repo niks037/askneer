@@ -127,7 +127,11 @@ export async function GET(req: Request) {
   }
 
   const { data } = await query;
-  return Response.json({ memories: (data || []).map((r) => ({ memory: r.memory, source: r.source || 'ai', certainty: r.certainty || 'confirmed' })) });
+  // Routine nightly sleep logs aren't "facts to review" — they live in the Sleep Coach
+  // trend chart instead. Filtered here in code (not SQL) since source is null for
+  // existing rows, and SQL's neq doesn't reliably exclude/include nulls as intended.
+  const filtered = (data || []).filter((r) => r.source !== 'sleep_log');
+  return Response.json({ memories: filtered.map((r) => ({ memory: r.memory, source: r.source || 'ai', certainty: r.certainty || 'confirmed' })) });
 }
 
 export async function PATCH(req: Request) {
