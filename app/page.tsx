@@ -1145,6 +1145,7 @@ export default function Home() {
           childId={profile.child_id}
           onClose={() => setShowCheckin(false)}
           onComplete={() => setCheckinDoneToday(true)}
+          onOpenSleepCoach={() => setShowSleepCoach(true)}
         />
       )}
     </div>

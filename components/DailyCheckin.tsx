@@ -6,14 +6,22 @@ interface Props {
   childId: string
   onClose: () => void
   onComplete: () => void
+  onOpenSleepCoach?: () => void
 }
 
-export default function DailyCheckin({ childName, childId, onClose, onComplete }: Props) {
+interface Insight {
+  message: string
+  suggestion: string
+  action: string
+}
+
+export default function DailyCheckin({ childName, childId, onClose, onComplete, onOpenSleepCoach }: Props) {
   const [mood, setMood] = useState('')
   const [sleepQuality, setSleepQuality] = useState(3)
   const [notes, setNotes] = useState('')
   const [saving, setSaving] = useState(false)
   const [done, setDone] = useState(false)
+  const [insight, setInsight] = useState<Insight | null>(null)
 
   const moods = [
     { value: 'great', label: '😊 Great' },
@@ -26,7 +34,7 @@ export default function DailyCheckin({ childName, childId, onClose, onComplete }
   async function save() {
     if (!mood) return
     setSaving(true)
-    await fetch('/api/checkin', {
+    const res = await fetch('/api/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -37,12 +45,18 @@ export default function DailyCheckin({ childName, childId, onClose, onComplete }
         notes,
       })
     })
+    const data = await res.json().catch(() => ({}))
     setSaving(false)
     setDone(true)
-    setTimeout(() => {
-      onComplete()
-      onClose()
-    }, 1500)
+    if (data?.patternDetected && data?.insight) {
+      setInsight(data.insight)
+      onComplete() // still let the parent page know a check-in happened, just don't auto-close
+    } else {
+      setTimeout(() => {
+        onComplete()
+        onClose()
+      }, 1500)
+    }
   }
 
   const greeting = () => {
@@ -67,6 +81,41 @@ export default function DailyCheckin({ childName, childId, onClose, onComplete }
             <p style={{ fontSize: 13, color: '#888', marginTop: 6 }}>
               AskNeer will remember how {childName} is doing today.
             </p>
+
+            {insight && (
+              <div style={{
+                marginTop: 20, background: '#FFF0E8', border: '1px solid #F0C4A8',
+                borderRadius: 14, padding: 16, textAlign: 'left'
+              }}>
+                <p style={{ margin: '0 0 6px', fontSize: 13.5, fontWeight: 700, color: '#B5563A' }}>
+                  📊 {insight.message}
+                </p>
+                <p style={{ margin: '0 0 12px', fontSize: 13, color: '#555' }}>
+                  {insight.suggestion}
+                </p>
+                {onOpenSleepCoach && insight.action === 'sleep_coach' ? (
+                  <button
+                    onClick={() => { onOpenSleepCoach(); onClose(); }}
+                    style={{
+                      width: '100%', padding: 12, background: '#E07A5F', color: 'white',
+                      border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer'
+                    }}
+                  >
+                    🌙 Open Sleep Coach
+                  </button>
+                ) : (
+                  <button
+                    onClick={onClose}
+                    style={{
+                      width: '100%', padding: 12, background: 'none', color: '#B5563A',
+                      border: '1.5px solid #F0C4A8', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer'
+                    }}
+                  >
+                    Got it
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <>
