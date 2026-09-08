@@ -1,10 +1,17 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Props {
   childName: string
   childId: string
   onClose: () => void
+}
+
+interface SleepLog {
+  id: number
+  log_date: string
+  night_wakings: number
+  total_hours: number | null
 }
 
 export default function SleepCoach({ childName, childId, onClose }: Props) {
@@ -13,6 +20,8 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
   const [logId, setLogId] = useState<number | null>(null)
   const [wasAdjusted, setWasAdjusted] = useState(false)
   const [patternDetected, setPatternDetected] = useState(false)
+  const [trendLogs, setTrendLogs] = useState<SleepLog[]>([])
+  const [trendLoading, setTrendLoading] = useState(true)
   const [form, setForm] = useState({
     bedtime: '',
     wake_time: '',
@@ -58,7 +67,85 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
     return Math.round((wakeMins - bedMins) / 6) / 10
   }
 
+  useEffect(() => {
+    async function fetchTrend() {
+      try {
+        const res = await fetch(`/api/sleep?child_name=${encodeURIComponent(childName)}`)
+        const data = await res.json()
+        // API returns most-recent-first; reverse so the chart reads left-to-right chronologically
+        setTrendLogs((data.logs || []).slice(0, 7).reverse())
+      } catch {
+        setTrendLogs([])
+      } finally {
+        setTrendLoading(false)
+      }
+    }
+    fetchTrend()
+  }, [childName])
+
+  function renderTrendChart() {
+    if (trendLoading) return null
+    if (trendLogs.length < 2) return null // not enough data yet to show a meaningful trend
+
+    const maxWakings = Math.max(...trendLogs.map(l => l.night_wakings ?? 0), 1)
+    const barWidth = 28
+    const gap = 10
+    const chartHeight = 70
+    const width = trendLogs.length * (barWidth + gap)
+
+    const firstHalf = trendLogs.slice(0, Math.ceil(trendLogs.length / 2))
+    const secondHalf = trendLogs.slice(Math.ceil(trendLogs.length / 2))
+    const avg = (arr: SleepLog[]) => arr.length ? arr.reduce((s, l) => s + (l.night_wakings ?? 0), 0) / arr.length : 0
+    const improving = avg(secondHalf) < avg(firstHalf)
+
+    return (
+      <div style={{ background: 'white', borderRadius: 14, padding: 16, border: '1px solid #F0EDED', marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#E07A5F', textTransform: 'uppercase', letterSpacing: 1 }}>
+            {childName}'s Night Wakings
+          </p>
+          {trendLogs.length >= 4 && (
+            <span style={{
+              fontSize: 11.5, fontWeight: 700, padding: '3px 8px', borderRadius: 8,
+              background: improving ? '#E8F5E9' : '#FFF0E8',
+              color: improving ? '#2E7D32' : '#B5563A'
+            }}>
+              {improving ? '↓ Improving' : '— Watching'}
+            </span>
+          )}
+        </div>
+        <svg width="100%" height={chartHeight + 24} viewBox={`0 0 ${width} ${chartHeight + 24}`} preserveAspectRatio="xMinYMid meet">
+          {trendLogs.map((log, i) => {
+            const wakings = log.night_wakings ?? 0
+            const barHeight = Math.max((wakings / maxWakings) * chartHeight, 4)
+            const x = i * (barWidth + gap)
+            const y = chartHeight - barHeight
+            const dateLabel = log.log_date ? new Date(log.log_date).toLocaleDateString(undefined, { weekday: 'short' }) : ''
+            return (
+              <g key={log.id ?? i}>
+                <rect x={x} y={y} width={barWidth} height={barHeight} rx={5} fill="#E07A5F" opacity={0.85} />
+                <text x={x + barWidth / 2} y={y - 4} textAnchor="middle" fontSize="11" fontWeight="700" fill="#2D2D2D">
+                  {wakings}
+                </text>
+                <text x={x + barWidth / 2} y={chartHeight + 16} textAnchor="middle" fontSize="10" fill="#999">
+                  {dateLabel}
+                </text>
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+    )
+  }
+
+  const [validationError, setValidationError] = useState('')
+
   async function generatePlan() {
+    if (!form.bedtime || !form.wake_time) {
+      setValidationError("Please enter both bedtime and morning wake-up time — these are needed to build tonight's plan.")
+      return
+    }
+    setValidationError('')
     setStep('loading')
     const total_hours = calcTotalHours(form.bedtime, form.wake_time)
     try {
@@ -129,6 +216,8 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
           {/* FORM STEP */}
           {step === 'form' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              {renderTrendChart()}
 
               {/* Last night */}
               <div style={{ background: 'white', borderRadius: 14, padding: 16, border: '1px solid #F0EDED' }}>
@@ -208,6 +297,11 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
                 </div>
               </div>
 
+              {validationError && (
+                <p style={{ margin: '0 0 -8px', fontSize: 12.5, color: '#C0392B', fontWeight: 600, textAlign: 'center' }}>
+                  {validationError}
+                </p>
+              )}
               <button
                 onClick={generatePlan}
                 disabled={!form.bedtime || !form.wake_time}
