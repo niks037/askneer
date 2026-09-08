@@ -85,7 +85,21 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
 
   function renderTrendChart() {
     if (trendLoading) return null
-    if (trendLogs.length < 2) return null // not enough data yet to show a meaningful trend
+    if (trendLogs.length < 2) {
+      return (
+        <div style={{
+          background: 'white', borderRadius: 14, padding: '14px 16px', border: '1px dashed #E8DDD5',
+          marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10
+        }}>
+          <span style={{ fontSize: 20 }}>📈</span>
+          <p style={{ margin: 0, fontSize: 13, color: '#888' }}>
+            {trendLogs.length === 0
+              ? `Log tonight and we'll start tracking ${childName}'s sleep trend here.`
+              : `One more night logged and we'll show ${childName}'s sleep trend here.`}
+          </p>
+        </div>
+      )
+    }
 
     const maxWakings = Math.max(...trendLogs.map(l => l.night_wakings ?? 0), 1)
     const barWidth = 28
