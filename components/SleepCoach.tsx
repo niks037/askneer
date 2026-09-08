@@ -11,6 +11,8 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
   const [step, setStep] = useState<'form' | 'loading' | 'plan' | 'feedback' | 'done'>('form')
   const [plan, setPlan] = useState('')
   const [logId, setLogId] = useState<number | null>(null)
+  const [wasAdjusted, setWasAdjusted] = useState(false)
+  const [patternDetected, setPatternDetected] = useState(false)
   const [form, setForm] = useState({
     bedtime: '',
     wake_time: '',
@@ -73,6 +75,8 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
       const data = await res.json()
       setPlan(data.plan || 'Unable to generate plan. Please try again.')
       setLogId(data.log_id || null)
+      setWasAdjusted(!!data.wasAdjusted)
+      setPatternDetected(!!data.patternDetected)
       setStep('plan')
     } catch {
       setPlan('Something went wrong. Please try again.')
@@ -235,6 +239,26 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
           {/* PLAN STEP */}
           {step === 'plan' && (
             <div>
+              {(wasAdjusted || patternDetected) && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+                  {patternDetected && (
+                    <div style={{
+                      background: '#FFF0E8', border: '1px solid #F0C4A8', borderRadius: 10,
+                      padding: '8px 12px', fontSize: 12.5, color: '#B5563A', fontWeight: 600
+                    }}>
+                      📊 We've noticed a pattern over the last few nights
+                    </div>
+                  )}
+                  {wasAdjusted && (
+                    <div style={{
+                      background: '#EAF3FF', border: '1px solid #BFDBFE', borderRadius: 10,
+                      padding: '8px 12px', fontSize: 12.5, color: '#2563A8', fontWeight: 600
+                    }}>
+                      🔄 Adjusted based on how last night's plan went
+                    </div>
+                  )}
+                </div>
+              )}
               <div style={{ background: 'white', borderRadius: 16, padding: 20, border: '1.5px solid #E07A5F', marginBottom: 12 }}>
                 <p style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#E07A5F', textTransform: 'uppercase', letterSpacing: 1 }}>
                     🌙 Sleep Coach — {childName}'s Plan
@@ -251,7 +275,7 @@ export default function SleepCoach({ childName, childId, onClose }: Props) {
                 How did tonight go? →
               </button>
               <button
-                onClick={() => setStep('form')}
+                onClick={() => { setWasAdjusted(false); setPatternDetected(false); setStep('form') }}
                 style={{ width: '100%', padding: 12, background: 'none', color: '#aaa', border: 'none', fontSize: 13, cursor: 'pointer' }}
               >
                 Log another night

@@ -170,7 +170,12 @@ Give me:
     memory: sleepMemory
   }]);
 
-  return Response.json({ plan, log_id: inserted?.[0]?.id });
+  return Response.json({
+    plan,
+    log_id: inserted?.[0]?.id,
+    wasAdjusted: lastOutcome === "didnt_work" || lastOutcome === "somewhat",
+    patternDetected: consecutiveHighWakings >= 2,
+  });
 }
 
 export async function GET(req: Request) {
