@@ -39,6 +39,7 @@ This distinction matters a lot — never upgrade a hedge into a confirmed fact. 
 
 Rules:
 - Extract only important, long-term facts: allergies, milestones, health events, medications, daycare/school, sleep issues, feeding preferences, behavioral patterns, developmental concerns, family context
+- "Sleep issues" means durable patterns or problems (e.g. "won't self-soothe", "sleep regression since starting daycare", "needs white noise to sleep") — NOT a specific night's waking count or mood (e.g. "wakes 3 times", "good mood despite waking last night"). That routine nightly data is already tracked separately by Sleep Coach — do not extract it here, even if mentioned in conversation.
 - Keep each fact under 6 words when possible (e.g. "Takes swimming lessons" not "Started swimming lessons at age 4 years 3 months")
 - NEVER extract age as a memory (e.g. "2 months old", "4 years old") - age is calculated from date of birth automatically
 - NEVER extract generic statements like "is a baby" or "is a toddler"
@@ -96,8 +97,9 @@ Return ONLY valid JSON. No markdown, no explanation.`,
       .select("memory")
       .eq("email", email)
       .eq("child_name", child_name);
-    const existingSet = new Set((existing || []).map((r) => r.memory.toLowerCase()));
-    const newFacts = result.add.filter((f) => !existingSet.has(f.fact.toLowerCase()));
+    const normalize = (s: string) => s.toLowerCase().trim().replace(/[.,!?]+$/, '').replace(/\s+/g, ' ');
+    const existingSet = new Set((existing || []).map((r) => normalize(r.memory)));
+    const newFacts = result.add.filter((f) => !existingSet.has(normalize(f.fact)));
     if (newFacts.length) {
       await supabase.from("memories").insert(
         newFacts.map(({ fact, certainty }) => ({ email, child_name, memory: fact, certainty }))
