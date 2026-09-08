@@ -849,7 +849,7 @@ export default function Home() {
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
               {proModalReason === 'questions' && (
                 <div style={{ textAlign: "left" }}>
-                  {["Unlimited questions - ask anything, anytime", `${profile.name}'s memories stay with AskNeer`, "Vaccine tracker with full WHO schedule", "7-day free trial - cancel anytime"].map(f => (
+                  {["Sleep Coach that adjusts to what actually worked last night", `${profile.name}'s memory grows with every conversation`, "Daily check-ins that catch patterns before they become bigger", "Unlimited questions, anytime", "Full WHO vaccine schedule tracker", "7-day free trial - cancel anytime"].map(f => (
                     <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
                       <span style={{ fontSize: 14, color: "#555" }}>{f}</span>
@@ -857,7 +857,7 @@ export default function Home() {
                   ))}
                 </div>
               )}
-              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking and get unlimited questions - all personalized to your child."}
+              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro for a Sleep Coach that learns what works for your child, daily insights, the full WHO vaccine schedule, and unlimited questions."}
             </p>
             {checkoutError && (
               <div style={{ background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13, color: "#993C1D" }}>
