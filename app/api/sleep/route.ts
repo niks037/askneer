@@ -57,11 +57,42 @@ export async function POST(req: Request) {
 
   const childAge = profile?.child_dob ? getAge(profile.child_dob) : "unknown age";
 
-  // Build recent sleep context
+  // Build recent sleep context, including whether the plan we gave last time actually worked
+  const outcomeLabels: Record<string, string> = {
+    worked: "plan worked well",
+    somewhat: "plan helped somewhat, took longer than expected",
+    didnt_work: "plan didn't work, difficult night",
+  };
+
   const recentSleepContext = recentLogs && recentLogs.length > 0
-    ? `\nRecent sleep history (last ${recentLogs.length} days):\n${recentLogs.map(l =>
-        `- ${l.log_date}: ${l.total_hours}h total, ${l.night_wakings} wakings, mood: ${l.child_mood}`
-      ).join("\n")}`
+    ? `\nRecent sleep history (last ${recentLogs.length} days, most recent first):\n${recentLogs.map(l => {
+        const outcomeText = l.outcome
+          ? ` — outcome of that night's plan: ${outcomeLabels[l.outcome] || l.outcome}${l.outcome_notes ? ` (${l.outcome_notes})` : ""}`
+          : "";
+        return `- ${l.log_date}: ${l.total_hours}h total, ${l.night_wakings} wakings, mood: ${l.child_mood}${outcomeText}`;
+      }).join("\n")}`
+    : "";
+
+  // Flag a run of consecutive bad nights so the model reliably notices the pattern
+  // instead of relying on it to infer this from raw numbers.
+  const recentWakingCounts = (recentLogs || []).map(l => l.night_wakings ?? 0);
+  let consecutiveHighWakings = 0;
+  for (const count of recentWakingCounts) {
+    if (count >= 3) consecutiveHighWakings++;
+    else break;
+  }
+  const patternFlag = consecutiveHighWakings >= 2
+    ? `\nPATTERN DETECTED: ${child_name} has had 3+ night wakings for ${consecutiveHighWakings} nights in a row. Call this out explicitly and adjust the plan meaningfully rather than repeating the same advice.`
+    : "";
+
+  const lastOutcome = recentLogs && recentLogs[0]?.outcome;
+  const lastPlanText = recentLogs?.[0]?.plan_generated
+    ? `\nLast night's full plan was: "${recentLogs[0].plan_generated}"`
+    : "";
+  const lastOutcomeFlag = lastOutcome === "didnt_work"
+    ? `\nIMPORTANT: Last night's plan did NOT work.${lastPlanText} Do not repeat the same suggestions — try a genuinely different approach tonight and briefly acknowledge that the last approach didn't help.`
+    : lastOutcome === "somewhat"
+    ? `\nNote: last night's plan helped somewhat but wasn't fully effective.${lastPlanText} Refine it rather than repeating it unchanged.`
     : "";
 
   const memoriesContext = memories.length > 0
@@ -83,7 +114,8 @@ IMPORTANT RULES:
 - Never diagnose sleep disorders
 - Always add: "Every child is different — adjust based on what you know about your child"
 - Keep response under 200 words
-- No markdown, no bullet points with asterisks, use numbers for steps`,
+- No markdown, no bullet points with asterisks, use numbers for steps
+- If recent sleep history shows a past plan's outcome, you MUST factor it in — don't repeat advice that already failed, and explicitly build on advice that worked`,
     messages: [{
       role: "user",
       content: `Generate a personalized sleep plan for ${child_name}, ${childAge}.
@@ -98,6 +130,8 @@ Tonight's sleep data:
 - Child's mood today: ${child_mood || "not specified"}
 ${memoriesContext}
 ${recentSleepContext}
+${patternFlag}
+${lastOutcomeFlag}
 
 Give me:
 1. Suggested bedtime window for tonight with explanation
