@@ -525,7 +525,8 @@ export default function Home() {
               { emoji: "⏰", title: "Available at 3am", desc: "When your baby won't sleep and you need answers right now.", pro: false },
               { emoji: "🎯", title: "Knows their exact age", desc: "Every response calibrated to your child's age in months and years.", pro: false },
               { emoji: "🔒", title: "Private and secure", desc: "Your child's data is private. We never sell it or use it for advertising. Only trusted providers needed to run AskNeer ever process it.", pro: false },
-              { emoji: "🌙", title: "Tonight's Plan", desc: "Tell AskNeer how your child slept. Get a personalized bedtime plan for tonight.", pro: true },
+              { emoji: "🌙", title: "Tonight's Plan", desc: "Tell AskNeer how your child slept. It learns from what worked and adjusts each night's plan.", pro: true },
+              { emoji: "☀️", title: "Daily Check-in", desc: "A 10-second daily check-in that spots patterns in mood and sleep before they become bigger.", pro: false },
               { emoji: "📖", title: "Growing platform", desc: "Growth, milestones, and a lifetime storybook - all coming soon.", pro: false },
             ].map(f => (
               <div key={f.title} style={{ background: "#FFF9F5", borderRadius: 16, padding: "20px", border: "1px solid #F0EDED", position: "relative" }}>
@@ -849,7 +850,7 @@ export default function Home() {
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
               {proModalReason === 'questions' && (
                 <div style={{ textAlign: "left" }}>
-                  {["Sleep Coach that adjusts to what actually worked last night", `${profile.name}'s memory grows with every conversation`, "Daily check-ins that catch patterns before they become bigger", "Unlimited questions, anytime", "Full WHO vaccine schedule tracker", "7-day free trial - cancel anytime"].map(f => (
+                  {["Unlimited questions - ask anything, anytime", `${profile.name}'s memories stay with AskNeer`, "Vaccine tracker with full WHO schedule", "7-day free trial - cancel anytime"].map(f => (
                     <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                       <span style={{ color: "#E07A5F", fontWeight: 700 }}>✓</span>
                       <span style={{ fontSize: 14, color: "#555" }}>{f}</span>
@@ -857,7 +858,7 @@ export default function Home() {
                   ))}
                 </div>
               )}
-              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro for a Sleep Coach that learns what works for your child, daily insights, the full WHO vaccine schedule, and unlimited questions."}
+              {proModalReason === 'vaccine' && "Upgrade to AskNeer Pro to unlock vaccine tracking and get unlimited questions - all personalized to your child."}
             </p>
             {checkoutError && (
               <div style={{ background: "#FFF0E8", border: "1px solid #F4C5B4", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13, color: "#993C1D" }}>
@@ -1145,7 +1146,6 @@ export default function Home() {
           childId={profile.child_id}
           onClose={() => setShowCheckin(false)}
           onComplete={() => setCheckinDoneToday(true)}
-          onOpenSleepCoach={() => setShowSleepCoach(true)}
         />
       )}
     </div>
