@@ -28,17 +28,24 @@ export async function POST(req: Request) {
     system: `You are a memory extractor for a parenting app.
 Your job is to extract, update, or remove facts about the child from this conversation.
 Return a JSON object with two arrays:
-- "add": new facts to remember
+- "add": new facts to remember — each an object with "fact" and "certainty"
 - "remove": keywords of facts to delete (e.g. if parent says "not allergic to strawberries", include "strawberr")
+
+certainty must be one of:
+- "confirmed" — parent stated it as fact ("she has a milk allergy", "he was diagnosed with...", "her pediatrician said...")
+- "tentative" — parent hedged, guessed, or wasn't sure ("I think milk might bother her", "she seems sensitive to...", "not sure but maybe...")
+
+This distinction matters a lot — never upgrade a hedge into a confirmed fact. If the parent's wording is uncertain, the memory must be marked "tentative" even if it concerns something important like an allergy.
+
 Rules:
 - Extract only important, long-term facts: allergies, milestones, health events, medications, daycare/school, sleep issues, feeding preferences, behavioral patterns, developmental concerns, family context
 - Keep each fact under 6 words when possible (e.g. "Takes swimming lessons" not "Started swimming lessons at age 4 years 3 months")
 - NEVER extract age as a memory (e.g. "2 months old", "4 years old") - age is calculated from date of birth automatically
 - NEVER extract generic statements like "is a baby" or "is a toddler"
-- If parent corrects something (e.g. "she is NOT allergic"), add the correction to "add" and the old fact keyword to "remove"
+- If parent corrects something (e.g. "she is NOT allergic"), add the correction to "add" (as "confirmed", since a correction is a direct statement) and the old fact keyword to "remove"
 - If nothing important found, return {"add": [], "remove": []}
 Example:
-{"add": ["Not allergic to strawberries"], "remove": ["strawberr"]}
+{"add": [{"fact": "Not allergic to strawberries", "certainty": "confirmed"}, {"fact": "Possible milk sensitivity", "certainty": "tentative"}], "remove": ["strawberr"]}
 Return ONLY valid JSON. No markdown, no explanation.`,
     messages: [
       {
@@ -56,15 +63,18 @@ Return ONLY valid JSON. No markdown, no explanation.`,
     | undefined;
   if (!text?.text) return Response.json({ ok: true });
 
-  let result: { add: string[]; remove: string[] } = { add: [], remove: [] };
+  let result: { add: { fact: string; certainty: string }[]; remove: string[] } = { add: [], remove: [] };
   try {
     const cleaned = text.text.replace(/```json|```/g, "").trim();
     const parsed = JSON.parse(cleaned);
-    if (Array.isArray(parsed)) {
-      result.add = parsed;
-    } else {
-      result = { add: parsed.add || [], remove: parsed.remove || [] };
-    }
+    const rawAdd = Array.isArray(parsed) ? parsed : parsed.add || [];
+    // Normalize: handle both the new {fact, certainty} shape and a plain string fallback
+    result.add = rawAdd.map((item: string | { fact: string; certainty?: string }) =>
+      typeof item === "string"
+        ? { fact: item, certainty: "confirmed" }
+        : { fact: item.fact, certainty: item.certainty === "tentative" ? "tentative" : "confirmed" }
+    );
+    result.remove = Array.isArray(parsed) ? [] : parsed.remove || [];
   } catch {
     return Response.json({ ok: true });
   }
@@ -87,10 +97,10 @@ Return ONLY valid JSON. No markdown, no explanation.`,
       .eq("email", email)
       .eq("child_name", child_name);
     const existingSet = new Set((existing || []).map((r) => r.memory.toLowerCase()));
-    const newFacts = result.add.filter((f) => !existingSet.has(f.toLowerCase()));
+    const newFacts = result.add.filter((f) => !existingSet.has(f.fact.toLowerCase()));
     if (newFacts.length) {
       await supabase.from("memories").insert(
-        newFacts.map((memory) => ({ email, child_name, memory }))
+        newFacts.map(({ fact, certainty }) => ({ email, child_name, memory: fact, certainty }))
       );
     }
   }
@@ -108,7 +118,7 @@ export async function GET(req: Request) {
 
   let query = supabase
     .from("memories")
-    .select("memory, source")
+    .select("memory, source, certainty")
     .eq("email", email)
     .order("created_at", { ascending: true });
 
@@ -117,7 +127,7 @@ export async function GET(req: Request) {
   }
 
   const { data } = await query;
-  return Response.json({ memories: (data || []).map((r) => ({ memory: r.memory, source: r.source || 'ai' })) });
+  return Response.json({ memories: (data || []).map((r) => ({ memory: r.memory, source: r.source || 'ai', certainty: r.certainty || 'confirmed' })) });
 }
 
 export async function PATCH(req: Request) {
@@ -132,7 +142,8 @@ export async function PATCH(req: Request) {
     .from("memories")
     .update({ 
       memory: new_memory || old_memory,
-      source: 'parent'
+      source: 'parent',
+      certainty: 'confirmed'
     })
     .eq("email", email)
     .eq("child_name", child_name)

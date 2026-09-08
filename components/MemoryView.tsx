@@ -4,6 +4,7 @@ import { useState } from 'react'
 interface Memory {
   memory: string
   source?: string
+  certainty?: string
 }
 
 interface Props {
@@ -87,12 +88,14 @@ export default function MemoryView({ name, memories, onClose, onDelete, onConfir
 
   function MemoryItem({ m }: { m: Memory }) {
     const isAI = !m.source || m.source === 'ai'
+    const isTentative = m.certainty === 'tentative'
     const isEditing = editingMemory === m.memory
 
     return (
       <div style={{
         background: 'white', borderRadius: 10, padding: '10px 14px',
-        marginBottom: 6, border: isAI ? '1px solid #FEE2B3' : '1px solid #F0EDED'
+        marginBottom: 6,
+        border: isTentative ? '1px dashed #F5C065' : (isAI ? '1px solid #FEE2B3' : '1px solid #F0EDED')
       }}>
         {isEditing ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -123,6 +126,13 @@ export default function MemoryView({ name, memories, onClose, onDelete, onConfir
         ) : (
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
             <div style={{ flex: 1 }}>
+              {isTentative && (
+                <div style={{ marginBottom: 4 }}>
+                  <span style={{ fontSize: 10, color: '#B7791F', fontWeight: 700, background: '#FEF3C7', border: '1px solid #F5C065', borderRadius: 4, padding: '1px 6px' }}>
+                    🟡 Possible — not confirmed
+                  </span>
+                </div>
+              )}
               <span style={{ fontSize: 14, color: '#2D2D2D' }}>{m.memory}</span>
               {isAI ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
