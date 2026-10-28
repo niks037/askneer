@@ -90,6 +90,14 @@ export default function Home() {
     return rem > 0 ? `${years}y ${rem}m old` : `${years} year${years !== 1 ? "s" : ""} old`;
   }
 
+  function getMonthsOld(dob: string) {
+    if (!dob) return 12;
+    const birth = new Date(dob);
+    const now = new Date();
+    const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+    return Math.max(0, Math.min(36, months));
+  }
+
   async function loadProfile() {
     if (!session?.user?.email) {
       setProfileLoading(false);
@@ -1023,6 +1031,12 @@ export default function Home() {
               🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
               {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
             </button>
+            <a
+              href={`/guide?m=${getMonthsOld(profile.dob)}`}
+              style={{ background: "#F0FAF4", borderRadius: 20, padding: "10px 20px", fontSize: 13, fontWeight: 600, color: "#3D9970", display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none" }}
+            >
+              📖 Age guide
+            </a>
           </div>
 
           <div style={{ width: "100%", maxWidth: 600, display: "flex", gap: 10, alignItems: "flex-end" }}>
@@ -1097,6 +1111,12 @@ export default function Home() {
                   🌙 {isPro ? "Sleep Coach" : "Unlock Sleep Coach"}
                   {!isPro && <span style={{ fontSize: 10, background: "#5B6EE8", color: "white", borderRadius: 4, padding: "1px 5px", fontWeight: 700 }}>PRO</span>}
                 </button>
+                <a
+                  href={`/guide?m=${getMonthsOld(profile.dob)}`}
+                  style={{ background: "#F0FAF4", borderRadius: 20, padding: "8px 18px", fontSize: 13, fontWeight: 600, color: "#3D9970", display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none" }}
+                >
+                  📖 Age guide
+                </a>
               </div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
                 <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }}} rows={2} placeholder={`Ask about ${profile.name}...`} style={{ flex: 1, padding: "12px 14px", border: "2px solid #F0F0F0", borderRadius: 12, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5 }}
