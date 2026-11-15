@@ -20,7 +20,8 @@ const css = `
 .lh-signin:hover{background:rgba(251,246,238,.1)}
 
 .lh-herogrid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:36px 0 64px}
-.lh-h1{font-size:clamp(38px,6vw,64px);line-height:1.05;letter-spacing:-1.2px;font-weight:600;margin:0 0 20px}
+.lh-h1{font-size:clamp(30px,4.2vw,46px);line-height:1.14;letter-spacing:-.8px;font-weight:600;margin:0 0 18px}
+.lh-name{color:#EE8F76}
 .lh-lead{font-size:18px;line-height:1.65;color:#C9D0E0;max-width:30em;margin:0 0 28px}
 .lh-cta{display:inline-flex;align-items:center;gap:12px;background:#FBF6EE;color:var(--night);border:none;border-radius:14px;padding:15px 24px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .lh-cta:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(0,0,0,.28)}
@@ -119,9 +120,9 @@ export default function LandingHub({ onGoogle }: { onGoogle: () => void }) {
 
           <div className="lh-herogrid">
             <div>
-              <h1 className="lh-h1 serif">A calm answer, even at 3am.</h1>
+              <h1 className="lh-h1 serif">3am and baby’s awake? <span className="lh-name">AskNeer</span> has your answer.</h1>
               <p className="lh-lead">
-                AskNeer answers your parenting questions around your child's age and what you've told it. Ask about sleep, feeding or tantrums, any time.
+                Search results are written for everyone. Get answers built for your child's age, and an app that remembers what you've told it.
               </p>
               <button className="lh-cta" onClick={onGoogle}>
                 <GoogleG /> Continue with Google
