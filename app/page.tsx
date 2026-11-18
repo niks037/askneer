@@ -134,6 +134,7 @@ export default function Home() {
     if (!checkinData.done_today) {
       const skippedToday = localStorage.getItem(`askneer_checkin_skipped_${new Date().toDateString()}`);
       if (!skippedToday) {
+        try { localStorage.setItem(`askneer_checkin_skipped_${new Date().toDateString()}`, '1'); } catch {}
         setTimeout(() => setShowCheckin(true), 2000);
       }
     }
