@@ -787,7 +787,10 @@ export default function Home() {
         <DailyCheckin
           childName={profile.name}
           childId={profile.child_id}
-          onClose={() => setShowCheckin(false)}
+          onClose={() => {
+            try { localStorage.setItem(`askneer_checkin_skipped_${new Date().toDateString()}`, '1'); } catch {}
+            setShowCheckin(false);
+          }}
           onComplete={() => setCheckinDoneToday(true)}
         />
       )}
