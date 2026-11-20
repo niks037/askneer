@@ -4,8 +4,6 @@ import { useState } from "react";
 
 const WHATSAPP_URL = process.env.NEXT_PUBLIC_SLEEP_WHATSAPP_URL || "";
 const PLAN_URL = process.env.NEXT_PUBLIC_SLEEP_PLAN_URL || "";
-const LAUNCH_END = "Sunday 15 November";
-const SEATS = "200";
 
 const INK = "#3D2B24";
 const TERRA = "#E07A5F";
@@ -125,7 +123,7 @@ export default function SleepLanding({ src }: { src?: string }) {
 
       <section style={{ ...wrap, paddingTop: 44 }}>
         <div style={{ background: INK, color: "#fff", borderRadius: 22, padding: "28px 22px" }}>
-          <p style={{ letterSpacing: 2, fontSize: 12, fontWeight: 700, color: "#F2B5A1", margin: 0 }}>NEXT STEP · LIMITED PLACES</p>
+          <p style={{ letterSpacing: 2, fontSize: 12, fontWeight: 700, color: "#F2B5A1", margin: 0 }}>NEXT STEP</p>
           <h2 style={{ fontFamily: "Georgia, serif", fontSize: 28, lineHeight: 1.15, margin: "10px 0 8px" }}>
             The NeernMom Sleep Plan
           </h2>
@@ -136,15 +134,8 @@ export default function SleepLanding({ src }: { src?: string }) {
             <li>Gentle options, so you choose what fits your family</li>
             <li>Troubleshooting for early waking, short naps and rough patches</li>
             <li>Printable sleep logs and checklists</li>
-            <li>A parent support group, limited to the first {SEATS} parents</li>
+            <li>A parent support group</li>
           </ul>
-          <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 14, padding: "14px 16px", marginBottom: 18 }}>
-            <div style={{ fontSize: 12, letterSpacing: 1.5, color: "#F2B5A1", fontWeight: 700 }}>LAUNCH ACCESS CLOSES</div>
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 22, margin: "4px 0" }}>{LAUNCH_END}</div>
-            <div style={{ fontSize: 14, color: "#F3E4DC" }}>
-              Support group places are limited to the first {SEATS} parents. When they're gone, they're gone.
-            </div>
-          </div>
           {PLAN_URL ? (
             <a href={PLAN_URL} style={btn}>Get the Sleep Plan now</a>
           ) : (
